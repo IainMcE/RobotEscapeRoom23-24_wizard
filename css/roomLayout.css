@@ -1,0 +1,29 @@
+#previous{
+    position: absolute;
+    right: 50%;
+    bottom: 5%;
+}
+#submit{
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+}
+
+.disabled{
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#pieces{
+    background: green;
+    width:20%;
+    height: 70%;
+    position: absolute;
+    left: 5%;
+}
+
+canvas{
+    background-color:tan;
+    position: absolute;
+    right: 5%;
+}
