@@ -27,3 +27,16 @@ canvas{
     position: absolute;
     right: 5%;
 }
+
+#floorEdit{
+    position: absolute;
+    right:5%;
+    width: 700px;
+    height: 650px;
+}
+
+.floorCheckbox{
+    position:absolute;
+    padding : 0;
+    margin:0;
+}

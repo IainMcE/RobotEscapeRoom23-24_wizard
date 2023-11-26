@@ -6,11 +6,17 @@ class Space{
 }
 
 let room;
-let width = 4;
+let width = 5;
 let height = 4;
 let size = 100;
 const canvas = document.getElementById("roomCanvas");
 const context = canvas.getContext("2d");
+
+window.addEventListener('DOMContentLoaded', ()=>{
+    newRoom();
+    validateWalls();
+    drawRoom();
+});
 
 function newRoom(){
     room = []
@@ -72,6 +78,8 @@ function validateWalls(){
 }
 
 function drawRoom(){
+    validateWalls()
+    context.clearRect(0,0, canvas.width, canvas.height)
     for(let i = 0; i<height; i++){
         for(let j = 0; j<width; j++){
             x = size*(j+1);
@@ -109,8 +117,8 @@ function drawRoom(){
                     }
                     if(room[i][j].walls[2]!==null){//bottom wall
                         corner2y = y+(size*1.4);
-                    }else if(i<width-1 && j<width-1){
-                        if(room[i+1][j+1].walls[2]!==null){//bottom right space has top wall
+                    }else if(i<height-1 && j<width-1){
+                        if(room[i+1][j+1].walls[0]!==null){//bottom right space has top wall
                             corner2y = y+(size*0.6);
                         }
                     }
@@ -120,14 +128,14 @@ function drawRoom(){
                     let corner1x = x, corner2x = x+size;
                     if(room[i][j].walls[3]!==null){//left wall
                         corner1x = x-(size*0.4);
-                    }else if(i<width-1 && j>0){
+                    }else if(i<height-1 && j>0){
                         if(room[i+1][j-1].walls[1]!==null){//bottom left space has right wall
                             corner1x = x+(size*0.4);
                         }
                     }
                     if(room[i][j].walls[1]!==null){//right wall
                         corner2x = x+(size*1.4);
-                    }else if(i<width-1 && j<width-1){
+                    }else if(i<height-1 && j<width-1){
                         if(room[i+1][j+1].walls[3]!==null){//bottom right space has left wall
                             corner2x = x+(size*0.6);
                         }
@@ -145,8 +153,8 @@ function drawRoom(){
                     }
                     if(room[i][j].walls[2]!==null){//bottom wall
                         corner2y = y+(size*1.4);
-                    }else if(i<width-1 && j>0){
-                        if(room[i+1][j-1].walls[2]!==null){//bottom left space has top wall
+                    }else if(i<height-1 && j>0){
+                        if(room[i+1][j-1].walls[0]!==null){//bottom left space has top wall
                             corner2y = y+(size*0.6);
                         }
                     }
@@ -167,13 +175,6 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
     context.stroke();
 }
 
-window.addEventListener('DOMContentLoaded', ()=>{
-    newRoom();
-    setRoom();
-    validateWalls();
-    drawRoom();
-});
-
 function setRoom(){
     room[0][0].floor="floor"
     room[0][1].floor="floor"
@@ -187,4 +188,36 @@ function setRoom(){
     room[3][1].floor="floor"
     room[3][2].floor="floor"
     room[3][3].floor="floor"
+}
+
+function updateRoom(){
+    checks = document.getElementsByClassName("floorCheckbox")
+    for(let i=0; i<height; i++){
+        for(let j = 0; j<width; j++){
+            if(checks[i*width+j].checked){
+                room[i][j].floor = "floor"
+            }else{
+                room[i][j].floor = null
+            }
+        }
+    }
+    drawRoom()
+}
+
+//=================floor modifications=====================
+//do a series of buttons in the center of the tile just for adding and removing floor space
+let area = document.getElementById("floorEdit")
+//add a bunch of buttons
+for(let i = 0; i<height; i++){
+    for (let j=0; j<width; j++){
+        floorCheck = document.createElement("input")
+        floorCheck.type = "checkbox"
+        floorCheck.classList.toggle("floorCheckbox")
+        floorCheck.style.width = size/5+"px"
+        floorCheck.style.height = size/5+"px"
+        floorCheck.style.top = ((1.5+i)*size-size/10)+"px"
+        floorCheck.style.left = ((1.5+j)*size- size/10)+"px"
+        floorCheck.addEventListener("click", updateRoom)
+        area.appendChild(floorCheck)
+    }
 }
