@@ -14,6 +14,7 @@ const context = canvas.getContext("2d");
 
 window.addEventListener('DOMContentLoaded', ()=>{
     newRoom();
+    drawRoom();
 });
 
 function newRoom(){
@@ -87,6 +88,7 @@ function drawRoom(){
         for(let j = 0; j<width; j++){
             x = size*(j+1);
             y = size*(i+1);
+            interactableFloor(map, i, j)
             if(room[i][j].floor!==null){
                 context.beginPath()
                 context.rect(x, y, size, size)
@@ -108,7 +110,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
-                    interactableQuad(map, j, i, "top", corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
+                    interactableQuad(map, j, i, 0, corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
                 }
                 if(room[i][j].walls[1]!==null){//right wall
                     let corner1y = y, corner2y = y+size;
@@ -127,7 +129,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
-                    interactableQuad(map, j, i, "right", x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
+                    interactableQuad(map, j, i, 1, x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
                 }
                 if(room[i][j].walls[2]!==null){//bottom wall
                     let corner1x = x, corner2x = x+size;
@@ -146,7 +148,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
-                    interactableQuad(map, j, i, "bottom", corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
+                    interactableQuad(map, j, i, 2, corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
                 }
                 if(room[i][j].walls[3]!==null){//left wall
                     let corner1y = y, corner2y = y+size;
@@ -165,7 +167,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
-                    interactableQuad(map, j, i, "left", x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
+                    interactableQuad(map, j, i, 3, x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
                 }
             }
         }
@@ -182,50 +184,45 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
     context.stroke();
 }
 
-function interactableQuad(map, parentX, parentY, side, x1, y1, x2, y2, x3, y3, x4, y4){
-    wall = document.createElement("area")
-    wall.shape = "poly"
-    wall.coords = x1+","+y1+","+x2+","+y2+","+x3+","+y3+","+x4+","+y4
-    wall.addEventListener("click", ()=>{alert("Square "+parentX+", "+parentY+"'s "+side+" side clicked")})
-    map.append(wall)
+function interactableFloor(map, coordX, coordY){
+    let top = (coordY+1)*size, bottom = (coordY+2)*size, left = (coordX+1)*size, right = (coordX+2)*size
+    floor = document.createElement("area")
+    floor.shape = "rect"
+    if(coordY>0){
+        if(room[coordY-1][coordX].walls[2]!==null){ top+= size*0.3 }
+    }
+    if(coordY<height-1){
+        if(room[coordY+1][coordX].walls[0]!==null){ bottom += size*-0.3 }
+    }
+    if(coordX>0){
+        if(room[coordY][coordX-1].walls[1]!==null){ left += size*0.3 }
+    }
+    if(coordX<width-1){
+        if(room[coordY][coordX+1].walls[3]!==null){ right += size*-0.3 }
+    }
+    floor.coords = left+","+top+","+right+","+bottom
+    floor.addEventListener("click", ()=>{floorClick(coordX, coordY)})
+    map.append(floor)
 }
 
-function updateRoom(){
-    checks = document.getElementsByClassName("floorCheckbox")
-    for(let i=0; i<height; i++){
-        for(let j = 0; j<width; j++){
-            if(checks[i*width+j].checked){
-                room[i][j].floor = "floor"
-            }else{
-                room[i][j].floor = null
-            }
-        }
+function floorClick(x, y){
+    if(room[y][x].floor===null){
+        room[y][x].floor = "floor"
+    }else{
+        room[y][x].floor = null
     }
     drawRoom()
 }
 
-//=================floor modifications=====================
-//do a series of buttons in the center of the tile just for adding and removing floor space
-let area = document.getElementById("floorEdit")
-//add a bunch of buttons
-for(let i = 0; i<height; i++){
-    for (let j=0; j<width; j++){
-        floorCheck = document.createElement("input")
-        floorCheck.type = "checkbox"
-        floorCheck.classList.toggle("floorCheckbox")
-        floorCheck.style.width = size/5+"px"
-        floorCheck.style.height = size/5+"px"
-        floorCheck.style.top = ((1.5+i)*size-size/10)+"px"
-        floorCheck.style.left = ((1.5+j)*size- size/10)+"px"
-        floorCheck.addEventListener("click", updateRoom)
-        area.appendChild(floorCheck)
-    }
+sides =  ["top", "right", "bottom", "left"]
+function interactableQuad(map, parentX, parentY, side, x1, y1, x2, y2, x3, y3, x4, y4){
+    wall = document.createElement("area")
+    wall.shape = "poly"
+    wall.coords = x1+","+y1+","+x2+","+y2+","+x3+","+y3+","+x4+","+y4
+    wall.addEventListener("click", ()=>{wallClick(parentX, parentY, side)})
+    map.append(wall)
 }
 
-function selectAll(){
-    checks = document.getElementsByClassName("floorCheckbox")
-    for(let i = 0; i<checks.length; i++){
-        checks[i].checked = true;
-    }
-    updateRoom()
+function wallClick(x, y, side){
+    alert("Square "+x+", "+y+"'s "+sides[side]+" side clicked")
 }
