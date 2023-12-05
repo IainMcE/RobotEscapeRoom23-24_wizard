@@ -7,7 +7,7 @@ class Space{
 
 let room;
 let width = 5;
-let height = 4;
+let height = 5;
 let size = 100;
 const canvas = document.getElementById("roomCanvas");
 const context = canvas.getContext("2d");
