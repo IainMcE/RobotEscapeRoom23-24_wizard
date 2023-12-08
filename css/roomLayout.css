@@ -21,10 +21,12 @@
 
 #pieces{
     background: green;
+    color: white;
     width:20%;
     height: 70%;
     position: absolute;
     left: 5%;
+    padding: 2%;
 }
 
 canvas{
@@ -40,9 +42,14 @@ canvas{
     height: 700px;
 }
 
-.floorCheckbox, button{
+button{
     position:absolute;
-    padding : 0;
-    margin:0;
     z-index: 1;
+}
+
+#floorDropdown, #wallDropdown{
+    position: absolute;
+    background-color: cyan;
+    z-index: 1;
+    visibility: hidden;
 }

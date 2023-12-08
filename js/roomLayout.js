@@ -5,17 +5,44 @@ class Space{
     }
 }
 
+let selected = [-1, -1, -1] // x, y, side; -1 for none
 let room;
 let width = 5;
 let height = 5;
 let size = 100;
+let wallSelect = document.getElementById("wallSelect");
+let wallTypes = ["pressure plate", "panel", "doorway"]
+let floorSelect = document.getElementById("floorSelect")
+let floorTypes = ["calibration"]
 const canvas = document.getElementById("roomCanvas");
 const context = canvas.getContext("2d");
 
 window.addEventListener('DOMContentLoaded', ()=>{
+    wallSelect.addEventListener("change", ()=>{changeSelected("wall")})
+    floorSelect.addEventListener("change", ()=>{changeSelected("floor")})
+    setDropdowns();
     newRoom();
     drawRoom();
 });
+
+function setDropdowns(){
+    floorDrop = floorSelect
+    for(i = 0; i<floorTypes.length; i++){
+        type = floorTypes[i]
+        option = document.createElement("option")
+        option.value = type
+        option.innerText = type.charAt(0).toUpperCase()+type.slice(1)
+        floorDrop.append(option)
+    }
+    wallDrop = wallSelect
+    for(i = 0; i<wallTypes.length; i++){
+        type = wallTypes[i]
+        option = document.createElement("option")
+        option.value = type
+        option.innerText = type.charAt(0).toUpperCase()+type.slice(1)
+        wallDrop.append(option)
+    }
+}
 
 function newRoom(){
     room = []
@@ -88,7 +115,7 @@ function drawRoom(){
         for(let j = 0; j<width; j++){
             x = size*(j+1);
             y = size*(i+1);
-            interactableFloor(map, i, j)
+            interactableFloor(map, j, i)
             if(room[i][j].floor!==null){
                 context.beginPath()
                 context.rect(x, y, size, size)
@@ -202,16 +229,67 @@ function interactableFloor(map, coordX, coordY){
     }
     floor.coords = left+","+top+","+right+","+bottom
     floor.addEventListener("click", ()=>{floorClick(coordX, coordY)})
+    floor.addEventListener("contextmenu", (e)=>{
+        e.preventDefault()
+        selected = [coordX, coordY, -1]
+        setSelection(floorSelect, room[coordY][coordX].floor)
+        menu = document.getElementById("floorDropdown")
+        openMenu(menu, e.clientX, e.clientY)
+    })
     map.append(floor)
+}
+
+function openMenu(menu, x, y){
+    if(room[selected[1]][selected[0]].floor !== null){
+        containerStyle = window.getComputedStyle(document.getElementById("floorEdit"))
+        menu.style.left = (x - trimPX(containerStyle.left))+"px";
+        menu.style.top = (y - trimPX(containerStyle.top))+"px";
+        if(menu.style.visibility =="hidden" || menu.style.visibility ==""){
+            document.body.addEventListener("click", (e) => {clickOff(menu, e)}, {once: true})
+            menu.style.visibility = "visible"
+        }
+    }
+}
+
+function clickOff(element, mouse){
+    computed = window.getComputedStyle(element)
+    containerStyle = window.getComputedStyle(document.getElementById("floorEdit"))
+    let top = trimPX(computed.top)+trimPX(containerStyle.top)
+    let left = trimPX(computed.left)+trimPX(containerStyle.left)
+    if(mouse.clientX<left || mouse.clientX>left+trimPX(computed.width)
+        || mouse.clientY<top || mouse.clientY>top+trimPX(computed.height)){
+        element.style.visibility = "hidden"
+    }else{
+        document.body.addEventListener("click", (e) => {clickOff(menu, e)}, {once: true})
+    }
+}
+
+function trimPX(string){
+    return parseInt(string.substring(0, string.length-2))
 }
 
 function floorClick(x, y){
     if(room[y][x].floor===null){
         room[y][x].floor = "floor"
     }else{
-        room[y][x].floor = null
+        selected = [x, y, -1]
+        removeSelectedFloor()
     }
     drawRoom()
+}
+
+function removeSelectedFloor(){
+    room[selected[1]][selected[0]].floor = null
+    document.getElementById("floorDropdown").style.visibility = "hidden"
+    drawRoom()
+}
+
+function changeSelected(type){
+    if(type=="wall"){
+        room[selected[1]][selected[0]].walls[selected[2]] = wallSelect.value;
+    }else{
+        room[selected[1]][selected[0]].floor = floorSelect.value;
+    }
 }
 
 sides =  ["top", "right", "bottom", "left"]
@@ -219,10 +297,26 @@ function interactableQuad(map, parentX, parentY, side, x1, y1, x2, y2, x3, y3, x
     wall = document.createElement("area")
     wall.shape = "poly"
     wall.coords = x1+","+y1+","+x2+","+y2+","+x3+","+y3+","+x4+","+y4
-    wall.addEventListener("click", ()=>{wallClick(parentX, parentY, side)})
+    wall.addEventListener("contextmenu", (e)=>{
+        e.preventDefault();
+        wallClick(parentX, parentY, side, e)
+    })
     map.append(wall)
 }
 
-function wallClick(x, y, side){
-    alert("Square "+x+", "+y+"'s "+sides[side]+" side clicked")
+function wallClick(x, y, side, event){
+    selected = [x, y, side]
+    setSelection(floorSelect, room[y][x].walls[side])
+    menu = document.getElementById("wallDropdown")
+    openMenu(menu, event.clientX, event.clientY)
+}
+
+function setSelection(dropdown, value){
+    if(value==null){ return; }
+    for(var i, j= 0; i = dropdown.options[j]; j++){
+        if(i.value == value){
+            dropdown.selectedIndex = j;
+            return;
+        }
+    }
 }

@@ -5,10 +5,21 @@
     <body>
         <title>Robot Escape Room Designer</title>
 
-        <div id="pieces"></div>
+        <div id="pieces">
+            Left click on the canvas to add or remove a floor section.<br/>
+            Right click a floor or wall section to bring up a menu for it. <br/>
+        </div>
 
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
-        <div id="floorEdit"><button onclick="selectAll()">Select All</button></div>
+        <div id="floorEdit">
+            <div id="floorDropdown">
+                <select name="floorType" id="floorSelect"><option value="floor">Plain floor</option></select><br/>
+                <button id="deleteFloor" onclick="removeSelectedFloor()">Remove Section</button>
+            </div>
+            <div id="wallDropdown">
+                <select name="wallType" id="wallSelect"><option value="wall">Plain wall</option></select>
+            </div>
+        </div>
         <map name="floorMap" id="floorMap"></map>
         <img id="testimg" usemap="#floorMap">
 
