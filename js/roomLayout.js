@@ -306,7 +306,7 @@ function interactableQuad(map, parentX, parentY, side, x1, y1, x2, y2, x3, y3, x
 
 function wallClick(x, y, side, event){
     selected = [x, y, side]
-    setSelection(floorSelect, room[y][x].walls[side])
+    setSelection(wallSelect, room[y][x].walls[side])
     menu = document.getElementById("wallDropdown")
     openMenu(menu, event.clientX, event.clientY)
 }
