@@ -53,3 +53,7 @@ button{
     z-index: 1;
     visibility: hidden;
 }
+
+img{
+    position: absolute;
+}

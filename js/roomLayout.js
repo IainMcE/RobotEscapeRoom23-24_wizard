@@ -16,6 +16,8 @@ let floorSelect = document.getElementById("floorSelect")
 let floorTypes = ["calibration"]
 const canvas = document.getElementById("roomCanvas");
 const context = canvas.getContext("2d");
+// image natural dimensions = name: [width, height]
+const natImages = {"doorway": [1821, 2048], "panel": [1821, 2048], "pressure plate": [1821, 2048], "calibration": [450, 450]}
 
 window.addEventListener('DOMContentLoaded', ()=>{
     wallSelect.addEventListener("change", ()=>{changeSelected("wall")})
@@ -111,12 +113,17 @@ function drawRoom(){
     while(wallList.length>0){
         wallList[0].remove()
     }
+    editList = document.getElementById("floorEdit").children
+    while(editList.length > 2){
+        editList[2].remove();
+    }
     for(let i = 0; i<height; i++){
         for(let j = 0; j<width; j++){
             x = size*(j+1);
             y = size*(i+1);
             interactableFloor(map, j, i)
             if(room[i][j].floor!==null){
+                setImage(room[i][j].floor, y, x, y+size, x+size)
                 context.beginPath()
                 context.rect(x, y, size, size)
                 context.stroke();
@@ -137,6 +144,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
+                    setImage(room[i][j].walls[0], y-(size*0.3), Math.max(corner1x, x), y, Math.min(corner2x, x+size))
                     interactableQuad(map, j, i, 0, corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
                 }
                 if(room[i][j].walls[1]!==null){//right wall
@@ -156,6 +164,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
+                    setImage(room[i][j].walls[1], Math.max(corner1y, y), x+size, Math.min(corner2y, y+size), x+(size*1.3))
                     interactableQuad(map, j, i, 1, x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
                 }
                 if(room[i][j].walls[2]!==null){//bottom wall
@@ -175,6 +184,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
+                    setImage(room[i][j].walls[2], y+size, Math.max(corner1x, x), y+(size*1.3), Math.min(corner2x, x+size))
                     interactableQuad(map, j, i, 2, corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
                 }
                 if(room[i][j].walls[3]!==null){//left wall
@@ -194,6 +204,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
+                    setImage(room[i][j].walls[3], Math.max(corner1y, y), x-(size*0.3), Math.min(corner2y, y+size), x)
                     interactableQuad(map, j, i, 3, x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
                 }
             }
@@ -209,6 +220,24 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
     context.lineTo(x4, y4);
     context.lineTo(x1, y1);
     context.stroke();
+}
+
+function setImage(name, top, left, bottom, right){
+    if(name !== "wall" && name !== "floor"){
+        let container = document.getElementById("floorEdit")
+        let image = document.createElement("img")
+        image.src = "img/"+name+".png"
+        if(bottom-top<=right-left){
+            image.style.height = bottom-top
+            image.style.left = ((right+left)/2)-((bottom-top)/natImages[name][1]*natImages[name][0]/2)
+            image.style.top = top
+        }else{
+            image.style.width = right-left
+            image.style.left = left
+            image.style.top = ((bottom+top)/2)-((right-left)/natImages[name][0]*natImages[name][1]/2)
+        }
+        container.append(image)
+    }
 }
 
 function interactableFloor(map, coordX, coordY){
@@ -240,6 +269,11 @@ function interactableFloor(map, coordX, coordY){
 }
 
 function openMenu(menu, x, y){
+    if(menu.id == "wallDropdown"){ // hide the other when it opens
+        document.getElementById("floorDropdown").style.visibility = "hidden"
+    }else{
+        document.getElementById("wallDropdown").style.visibility = "hidden"
+    }
     if(room[selected[1]][selected[0]].floor !== null){
         containerStyle = window.getComputedStyle(document.getElementById("floorEdit"))
         menu.style.left = (x - trimPX(containerStyle.left))+"px";
@@ -290,6 +324,7 @@ function changeSelected(type){
     }else{
         room[selected[1]][selected[0]].floor = floorSelect.value;
     }
+    drawRoom()
 }
 
 sides =  ["top", "right", "bottom", "left"]
