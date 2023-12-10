@@ -1,0 +1,93 @@
+# Import necessary libraries
+from flask import Flask, render_template, redirect, request, url_for, session
+from flask_session import Session
+
+# Initialize the Flask app
+app = Flask(__name__)
+
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+app.secret_key = 'RobotEscapeRoomMQP2324'
+
+# --- Flask templates ---
+@app.route('/')
+def main():
+    return render_template('main.html')
+
+def separate_sections(input_content):
+    sections = {}
+
+    lines = input_content.split('\r\n')
+
+    section_name = None
+    section_content = []
+
+    for line in lines:
+        # Split each line into words
+        words = line.strip().split(':')
+
+        if len(words) >= 2:
+            # If a new section is encountered, store the previous section's data
+            if section_name is not None:
+                sections[section_name] = {'title': section_name, 'content': section_content}
+                section_content = []
+
+            section_name = words[0].strip()
+            section_content.append(words[1].strip())
+        else:
+            # If the line doesn't have a colon, assume it's part of the content
+            section_content.append(line.strip())
+
+    # Store the last section
+    if section_name is not None:
+        sections[section_name] = {'title': section_name, 'content': section_content}
+
+    # Print each section to the console
+    for section, data in sections.items():
+        print(f"Section: {data['title']}")
+        print(f"Content: {data['content']}")
+        print("-" * 30)
+
+    return sections
+
+
+@app.route('/verify', methods=['POST'])
+def verify():
+    if 'fileInput' not in request.files:
+        return 'No file part'
+
+    file = request.files['fileInput']
+
+    if file.filename == '':
+        return 'No selected file'
+
+    file_content = file.read().decode('utf-8')
+
+    print("File Content:")
+    print(file_content)
+    
+    session['file_content'] = file_content
+
+    # Use separate_sections function to process the content
+    sections = separate_sections(file_content)
+
+    # Print sections for further debugging
+    print("Sections:")
+    print(sections)
+        
+    message = 'Form submission successful!'    
+    return render_template('confirmation.html', message=message)
+
+@app.route('/roomLayout')
+def build():
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+
+    return render_template('roomLayout.html', sections=sections, file_content=file_content)
+
+# --- Flask templates Ends ---
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8080, debug=True)

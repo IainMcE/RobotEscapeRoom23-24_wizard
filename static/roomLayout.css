@@ -20,12 +20,22 @@
 }
 
 #pieces{
-    background: green;
+    background: darkgreen;
     color: white;
     width:20%;
     height: 70%;
     position: absolute;
     left: 5%;
+    padding: 2%;
+}
+
+#script{
+    background: navy;
+    color: white;
+    width:23%;
+    height: 70%;
+    position: absolute;
+    left: 30%;
     padding: 2%;
 }
 
@@ -56,4 +66,11 @@ button{
 
 img{
     position: absolute;
+}
+
+.draggable {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: move;
 }

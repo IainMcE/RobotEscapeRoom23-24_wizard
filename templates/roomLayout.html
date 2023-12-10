@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/roomLayout.css">
+    </head>
+    <body>
+        <title>Robot Escape Room Designer</title>
+
+        <div id="pieces">
+            Left click on the canvas to add or remove a floor section.<br/>
+            Right click a floor or wall section to bring up a menu for it. <br/>
+        </div>
+
+        <div id="script" style="overflow-y:scroll;">
+            <h2>Sections:</h2>
+            {% for section, data in sections.items() %}
+                <div class="draggable" draggable="true" ondragstart="drag(event)">
+                    <h3>{{ data.title }}</h3>
+                    <ul>
+                        {% for item in data.content %}
+                            {% if item.strip() != '' %}
+                                <li>{{ item }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            function drag(ev) {
+                ev.dataTransfer.setData("text/plain", ev.target.id);
+            }
+        </script>
+
+        <canvas id="roomCanvas" width="700px" height="700px"></canvas>
+        <div id="floorEdit">
+            <div id="floorDropdown">
+                <select name="floorType" id="floorSelect"><option value="floor">Plain floor</option></select><br/>
+                <button id="deleteFloor" onclick="removeSelectedFloor()">Remove Section</button>
+            </div>
+            <div id="wallDropdown">
+                <select name="wallType" id="wallSelect"><option value="wall">Plain wall</option></select>
+            </div>
+        </div>
+        <map name="floorMap" id="floorMap"></map>
+        <img id="testimg" usemap="#floorMap">
+
+        <button id="previous"> Start? </button>
+        <button id="submit"> Puzzle progression? </button>
+        <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
+          
+    </body>
+</html>
