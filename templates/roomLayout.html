@@ -8,6 +8,7 @@
         <div id="pieces">
             Left click on the canvas to add or remove a floor section.<br/>
             Right click a floor or wall section to bring up a menu for it. <br/>
+            Left click and drag the sections of text to different rooms. <br/>
         </div>
 
         <div id="script" style="overflow-y:scroll;">
@@ -45,8 +46,7 @@
         <map name="floorMap" id="floorMap"></map>
         <img id="testimg" usemap="#floorMap">
 
-        <button id="previous"> Start? </button>
-        <button id="submit"> Puzzle progression? </button>
+        <button id="generate"> Generate Experience </button>
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
           
     </body>
