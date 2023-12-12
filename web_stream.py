@@ -9,10 +9,18 @@ app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 app.secret_key = 'RobotEscapeRoomMQP2324'
 
-# --- Flask templates ---
-@app.route('/')
-def main():
-    return render_template('main.html')
+def get_initial_room_state():
+    initial_state = [[{"floor": "floor", "walls": ["wall", None, "wall", None]}] * 5] * 5
+    print("Initial Room State:", initial_state)
+    return initial_state
+
+# Define the list of puzzles
+puzzles = {
+    "Start": {"requirements": [], "next_state": "Puzzle1"},
+    "Puzzle1": {"requirements": ["Start"], "next_state": "Puzzle2"},
+    "Puzzle2": {"requirements": ["Start", "Puzzle1"], "next_state": "FinalPuzzle"},
+    "FinalPuzzle": {"requirements": ["Start", "Puzzle1", "Puzzle2"], "next_state": None},
+}
 
 def separate_sections(input_content):
     sections = {}
@@ -50,6 +58,10 @@ def separate_sections(input_content):
 
     return sections
 
+# --- Flask templates ---
+@app.route('/')
+def main():
+    return render_template('main.html')
 
 @app.route('/verify', methods=['POST'])
 def verify():
@@ -78,13 +90,59 @@ def verify():
     message = 'Form submission successful!'    
     return render_template('confirmation.html', message=message)
 
+@app.route('/state_machine')
+def state_machine():
+    # Check if the player has completed the requirements for the current state
+    current_state = session.get('current_state', 'Start')
+    puzzle_details = puzzles.get(current_state)
+
+    if puzzle_details:
+        requirements_met = all(req_state in session.get('completed_puzzles', []) for req_state in puzzle_details["requirements"])
+
+        if requirements_met:
+            # If requirements are met, proceed to the next state
+            session['current_state'] = puzzle_details["next_state"]
+            return redirect(url_for('state_machine'))
+
+        # Render the corresponding template based on the current state
+        return render_template(f'{current_state.lower()}_puzzle.html', requirements=puzzle_details["requirements"])
+
+    # Handle invalid state
+    return 'Invalid state'
+
 @app.route('/roomLayout')
 def build():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')
     sections = separate_sections(file_content)
 
-    return render_template('roomLayout.html', sections=sections, file_content=file_content)
+    # Retrieve the room state from the session
+    room_state = session.get('room_state')
+
+    # If room_state is not in the session, set it (replace this with your logic)
+    if room_state is None:
+        room_state = get_initial_room_state()  # Replace this with your logic to get the room state
+        session['room_state'] = room_state
+
+    return render_template('roomLayout.html', sections=sections, file_content=file_content, room_state=room_state)
+
+@app.route('/finalRoom')
+def final():
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+    
+    # Retrieve the room state from the session
+    room_state = session.get('room_state')
+
+    # If room_state is not in the session, set it (replace this with your logic)
+    if room_state is None:
+        room_state = session.get('room_state')  # Replace this with your logic to get the room state
+        session['room_state'] = room_state
+        
+    print("Session Contents:", session)
+
+    return render_template('finalRoom.html', sections=sections, file_content=file_content, room_state=room_state)
 
 # --- Flask templates Ends ---
 

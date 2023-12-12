@@ -28,26 +28,34 @@
         </div>
 
         <script>
-            function drag(ev) {
+
+            function drag(event) {
                 ev.dataTransfer.setData("text/plain", ev.target.id);
             }
+
+            function redirectToFinal() {
+                console.log("Redirecting to final route");
+                window.location.href = "{{ url_for('final') }}";
+            }
+
         </script>
 
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
         <div id="floorEdit">
-            <div id="floorDropdown">
+            <div id="floorDropdown" dropzone="copy">
                 <select name="floorType" id="floorSelect"><option value="floor">Plain floor</option></select><br/>
                 <button id="deleteFloor" onclick="removeSelectedFloor()">Remove Section</button>
             </div>
-            <div id="wallDropdown">
+            <div id="wallDropdown" dropzone="copy">
                 <select name="wallType" id="wallSelect"><option value="wall">Plain wall</option></select>
             </div>
         </div>
         <map name="floorMap" id="floorMap"></map>
         <img id="testimg" usemap="#floorMap">
 
-        <button id="generate"> Generate Experience </button>
+        <button id="generate" onclick="redirectToFinal()"> Save Layout </button>
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
+        <script src="{{url_for('static', filename='js/roomState.js')}}"></script>
           
     </body>
 </html>

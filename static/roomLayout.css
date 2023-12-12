@@ -17,10 +17,10 @@
 #pieces{
     background: darkgreen;
     color: white;
-    width:20%;
+    width:12%;
     height: 70%;
     position: absolute;
-    left: 5%;
+    left: 1%;
     padding: 2%;
 }
 
@@ -30,7 +30,7 @@
     width:23%;
     height: 70%;
     position: absolute;
-    left: 30%;
+    left: 20%;
     padding: 2%;
 }
 
@@ -52,7 +52,7 @@ button{
     z-index: 1;
 }
 
-#floorDropdown, #wallDropdown{
+#floorDropdown, #wallDropdown, #uploadDropdown{
     position: absolute;
     background-color: cyan;
     z-index: 1;

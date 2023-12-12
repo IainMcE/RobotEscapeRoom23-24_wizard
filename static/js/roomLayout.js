@@ -266,6 +266,11 @@ function interactableFloor(map, coordX, coordY){
         openMenu(menu, e.clientX, e.clientY)
     })
     map.append(floor)
+
+    floor.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({ x: coordX, y: coordY }));
+    });
+
 }
 
 function openMenu(menu, x, y){
