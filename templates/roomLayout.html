@@ -11,22 +11,6 @@
             Left click and drag the sections of text to different rooms. <br/>
         </div>
 
-        <div id="script" style="overflow-y:scroll;">
-            <h2>Sections:</h2>
-            {% for section, data in sections.items() %}
-                <div class="draggable" draggable="true" ondragstart="drag(event)">
-                    <h3>{{ data.title }}</h3>
-                    <ul>
-                        {% for item in data.content %}
-                            {% if item.strip() != '' %}
-                                <li>{{ item }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endfor %}
-        </div>
-
         <script>
 
             function drag(event) {
@@ -55,7 +39,6 @@
 
         <button id="generate" onclick="redirectToFinal()"> Save Layout </button>
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
-        <script src="{{url_for('static', filename='js/roomState.js')}}"></script>
           
     </body>
 </html>

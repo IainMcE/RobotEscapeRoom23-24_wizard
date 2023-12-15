@@ -92,23 +92,11 @@ def verify():
 
 @app.route('/state_machine')
 def state_machine():
-    # Check if the player has completed the requirements for the current state
-    current_state = session.get('current_state', 'Start')
-    puzzle_details = puzzles.get(current_state)
-
-    if puzzle_details:
-        requirements_met = all(req_state in session.get('completed_puzzles', []) for req_state in puzzle_details["requirements"])
-
-        if requirements_met:
-            # If requirements are met, proceed to the next state
-            session['current_state'] = puzzle_details["next_state"]
-            return redirect(url_for('state_machine'))
-
-        # Render the corresponding template based on the current state
-        return render_template(f'{current_state.lower()}_puzzle.html', requirements=puzzle_details["requirements"])
-
-    # Handle invalid state
-    return 'Invalid state'
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+    
+    return render_template('fsm.html', sections=sections, file_content=file_content)
 
 @app.route('/roomLayout')
 def build():
