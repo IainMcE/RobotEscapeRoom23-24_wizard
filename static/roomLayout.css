@@ -3,11 +3,23 @@
     --difference: 40px;
 }
 
-#generate{
+#previous{
+    position: absolute;
+    right: 50%;
+    bottom: 5%;
+}
+#submit{
     position: absolute;
     left: 50%;
     bottom: 5%;
 }
+
+#fsm{
+    position: absolute;
+    left: 60%;
+    bottom: 5%;
+}
+
 
 .disabled{
     opacity: 0.4;
@@ -15,22 +27,12 @@
 }
 
 #pieces{
-    background: darkgreen;
+    background: green;
     color: white;
-    width:12%;
+    width:20%;
     height: 70%;
     position: absolute;
-    left: 1%;
-    padding: 2%;
-}
-
-#script{
-    background: navy;
-    color: white;
-    width:23%;
-    height: 70%;
-    position: absolute;
-    left: 20%;
+    left: 5%;
     padding: 2%;
 }
 
@@ -52,7 +54,7 @@ button{
     z-index: 1;
 }
 
-#floorDropdown, #wallDropdown, #uploadDropdown{
+#floorDropdown, #wallDropdown{
     position: absolute;
     background-color: cyan;
     z-index: 1;
@@ -63,9 +65,13 @@ img{
     position: absolute;
 }
 
-.draggable {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin: 10px 0;
-    cursor: move;
+p{
+    position: relative;
+    height: 50px;
+    left: 50px;
+}
+
+p>img{
+    background-color: white;
+    left: -55px
 }

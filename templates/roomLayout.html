@@ -6,39 +6,28 @@
         <title>Robot Escape Room Designer</title>
 
         <div id="pieces">
+            <h1>Instructions:</h1>
             Left click on the canvas to add or remove a floor section.<br/>
             Right click a floor or wall section to bring up a menu for it. <br/>
-            Left click and drag the sections of text to different rooms. <br/>
+            <h1>Legend:</h1>
         </div>
-
-        <script>
-
-            function drag(event) {
-                ev.dataTransfer.setData("text/plain", ev.target.id);
-            }
-
-            function redirectToFinal() {
-                console.log("Redirecting to final route");
-                window.location.href = "{{ url_for('final') }}";
-            }
-
-        </script>
 
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
         <div id="floorEdit">
-            <div id="floorDropdown" dropzone="copy">
+            <div id="floorDropdown">
                 <select name="floorType" id="floorSelect"><option value="floor">Plain floor</option></select><br/>
                 <button id="deleteFloor" onclick="removeSelectedFloor()">Remove Section</button>
             </div>
-            <div id="wallDropdown" dropzone="copy">
+            <div id="wallDropdown">
                 <select name="wallType" id="wallSelect"><option value="wall">Plain wall</option></select>
             </div>
         </div>
         <map name="floorMap" id="floorMap"></map>
         <img id="testimg" usemap="#floorMap">
 
-        <button id="generate" onclick="redirectToFinal()"> Save Layout </button>
+        <button id="previous"> Start? </button>
+        <button id="submit"> Puzzle progression? </button>
+        <button id="fsm" type="button" onclick="window.location.href = '/state_machine' ; " class="button">FSM</button>
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
-          
     </body>
 </html>

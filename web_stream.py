@@ -90,7 +90,7 @@ def verify():
     message = 'Form submission successful!'    
     return render_template('confirmation.html', message=message)
 
-@app.route('/state_machine')
+@app.route('/state_machine', methods=["GET", "POST"])
 def state_machine():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')

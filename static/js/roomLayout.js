@@ -17,15 +17,59 @@ let floorTypes = ["calibration"]
 const canvas = document.getElementById("roomCanvas");
 const context = canvas.getContext("2d");
 // image natural dimensions = name: [width, height]
-const natImages = {"doorway": [1821, 2048], "panel": [1821, 2048], "pressure plate": [1821, 2048], "calibration": [450, 450]}
+const natImages = {"default": [99, 144], "doorway": [1821, 2048], "panel": [1821, 2048], "calibration": [450, 450]}
 
 window.addEventListener('DOMContentLoaded', ()=>{
-    wallSelect.addEventListener("change", ()=>{changeSelected("wall")})
-    floorSelect.addEventListener("change", ()=>{changeSelected("floor")})
+    loadRoom();
+    wallSelect.addEventListener("change", ()=>{changeSelected("wall")});
+    floorSelect.addEventListener("change", ()=>{changeSelected("floor")});
+    setLegend();
     setDropdowns();
-    newRoom();
     drawRoom();
+    document.getElementById("submit").addEventListener("click", ()=>{nextPage()})
+    document.getElementById("previous").addEventListener("click", ()=>{prevPage()})
 });
+
+function loadRoom(){
+    let stringRoom = sessionStorage.getItem("room")
+    if(stringRoom !== null){
+        room = JSON.parse(stringRoom)
+    }else{
+        newRoom();
+    }
+}
+
+function setLegend(){
+    legend = document.getElementById("pieces");
+    legend.innerHTML += "Wall types:<br/>"
+    for(i in wallTypes){
+        p = document.createElement("p")
+        type = wallTypes[i]
+        if(!(type in natImages)){
+            type = "default"
+        }
+        image = document.createElement("img")
+        image.height = 50
+        image.src = "img/"+type+".png"
+        p.append(image)
+        p.innerHTML += type.charAt(0).toUpperCase()+type.slice(1)+"<br/>"
+        legend.append(p)
+    }
+    legend.innerHTML += "Floor types: <br/>"
+    for(i in floorTypes){
+        p = document.createElement("p")
+        type = floorTypes[i]
+        if(!(type in natImages)){
+            type = "default"
+        }
+        image = document.createElement("img")
+        image.height = 50
+        image.src = "img/"+type+".png"
+        p.append(image)
+        p.innerHTML += type.charAt(0).toUpperCase()+type.slice(1)+"<br/>"
+        legend.append(p)
+    }
+}
 
 function setDropdowns(){
     floorDrop = floorSelect
@@ -224,6 +268,9 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
 
 function setImage(name, top, left, bottom, right){
     if(name !== "wall" && name !== "floor"){
+        if(!(name in natImages)){
+            name = "default"
+        }
         let container = document.getElementById("floorEdit")
         let image = document.createElement("img")
         image.src = "img/"+name+".png"
@@ -266,11 +313,6 @@ function interactableFloor(map, coordX, coordY){
         openMenu(menu, e.clientX, e.clientY)
     })
     map.append(floor)
-
-    floor.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", JSON.stringify({ x: coordX, y: coordY }));
-    });
-
 }
 
 function openMenu(menu, x, y){
@@ -359,4 +401,19 @@ function setSelection(dropdown, value){
             return;
         }
     }
+}
+
+function nextPage(){
+    saveRoom();
+    // window.location.replace('')
+}
+
+function prevPage(){
+    saveRoom();
+    // window.location.replace('')
+}
+
+function saveRoom(){
+    let stringRoom = JSON.stringify(room)
+    sessionStorage.setItem("room", stringRoom)
 }
