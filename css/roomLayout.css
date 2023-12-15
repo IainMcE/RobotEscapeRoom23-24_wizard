@@ -57,3 +57,14 @@ button{
 img{
     position: absolute;
 }
+
+p{
+    position: relative;
+    height: 50px;
+    left: 50px;
+}
+
+p>img{
+    background-color: white;
+    left: -55px
+}
