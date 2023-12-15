@@ -107,9 +107,9 @@ def build():
     # Retrieve the room state from the session
     room_state = session.get('room_state')
 
-    # If room_state is not in the session, set it (replace this with your logic)
+    # If room_state is not in the session, set it
     if room_state is None:
-        room_state = get_initial_room_state()  # Replace this with your logic to get the room state
+        room_state = get_initial_room_state() # doesn't work
         session['room_state'] = room_state
 
     return render_template('roomLayout.html', sections=sections, file_content=file_content, room_state=room_state)
@@ -123,9 +123,9 @@ def final():
     # Retrieve the room state from the session
     room_state = session.get('room_state')
 
-    # If room_state is not in the session, set it (replace this with your logic)
+    # If room_state is not in the session, set it
     if room_state is None:
-        room_state = session.get('room_state')  # Replace this with your logic to get the room state
+        room_state = session.get('room_state')
         session['room_state'] = room_state
         
     print("Session Contents:", session)
