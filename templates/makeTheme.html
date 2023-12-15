@@ -1,39 +1,6 @@
 <html>
     <head>
-        <link type="text/css" rel="stylesheet" href="css/makeTheme.css">
-        <script>
-            function setTheme(){
-                //disable custom
-                document.getElementById("customCreator").classList.toggle("disabled", true);
-                let theme = document.querySelector('input[name="theme"]:checked').value;
-                if(theme==="light"){
-                    document.documentElement.style.setProperty('--bgColor', "white")
-                    document.documentElement.style.setProperty('--fontColor', "black")
-                    document.documentElement.style.setProperty('--lowContrast', "grey")
-                }else if(theme === "dark"){
-                    document.documentElement.style.setProperty('--bgColor', "#131231")
-                    document.documentElement.style.setProperty('--fontColor', "white")
-                    document.documentElement.style.setProperty('--lowContrast', "black")
-                }else{
-                    //enable custom
-                    document.getElementById("customCreator").classList.toggle("disabled", false);
-                }
-            }
-            function updateCustom(){
-                document.documentElement.style.setProperty('--bgColor', document.getElementById("bgColor").value)
-                document.documentElement.style.setProperty('--fontColor', document.getElementById("fontColor").value)
-                document.documentElement.style.setProperty('--lowContrast', document.getElementById("lowContrast").value)
-            }
-            window.onload = () => {
-                setTheme();
-                document.getElementsByName("theme").forEach(element => {
-                    element.addEventListener("change", setTheme);
-                });
-                document.querySelectorAll('input[type=color]').forEach(element => {
-                    element.addEventListener("input", updateCustom)
-                });
-            };
-        </script>
+        <link type="text/css" rel="stylesheet" href="static/makeTheme.css">
     </head>
     <body>
         <title>Robot Escape Room Designer</title>
@@ -41,7 +8,7 @@
         <div id="themeSelection">
             <h2>Select a theme default:</h2>
             <input type="radio" name="theme" id="light" value="light"><label for="light">Light</label>
-            <input type="radio" name="theme" id="dark" value="dark" checked><label for="dark">Dark</label>
+            <input type="radio" name="theme" id="dark" value="dark"><label for="dark">Dark</label>
             <input type="radio" name="theme" id="custom" value="custom"><label for="custom">Custom</label><br>
             (Light and Dark will always be available for the user)
         </div>
@@ -57,10 +24,19 @@
         <div id="themePreview">
             <h1> Header </h1>
             <button>Button</button>
-            <img src="img/Settings.png">
+            <img src="/static/img/Settings.png">
         </div>
 
-        <button id="previous"> Puzzle Progression? </button>
-        <button id="submit"> Finalize? </button>
+        <script>
+            function redirectToFSM() {
+                console.log("Redirecting to FSM");
+                saveTheme();
+                window.location.href = "{{ url_for('state_machine') }}";
+            }
+        </script>
+
+        <button id="previous" onclick="redirectToFSM()"> Puzzle Progression </button>
+        <!-- <button id="submit"> Finalize? </button> -->
+        <script src="{{url_for('static', filename='js/makeTheme.js')}}"></script>
     </body>
 </html>
