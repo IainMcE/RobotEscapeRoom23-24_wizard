@@ -132,6 +132,22 @@ def final():
 
     return render_template('finalRoom.html', sections=sections, file_content=file_content, room_state=room_state)
 
+@app.route('/makeTheme')
+def theme():
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+
+    # Retrieve the room state from the session
+    theme = session.get('CSStheme')
+
+    # If theme is not in the session, set it
+    if theme is None:
+        theme = '{"name":"dark"}'
+        session['CSStheme'] = theme
+
+    return render_template('makeTheme.html', sections=sections, file_content=file_content, theme=theme)
+
 # --- Flask templates Ends ---
 
 

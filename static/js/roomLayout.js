@@ -50,7 +50,7 @@ function setLegend(){
         }
         image = document.createElement("img")
         image.height = 50
-        image.src = "img/"+type+".png"
+        image.src = "/static/img/"+type+".png"
         p.append(image)
         p.innerHTML += type.charAt(0).toUpperCase()+type.slice(1)+"<br/>"
         legend.append(p)
@@ -64,7 +64,7 @@ function setLegend(){
         }
         image = document.createElement("img")
         image.height = 50
-        image.src = "img/"+type+".png"
+        image.src = "/static/img/"+type+".png"
         p.append(image)
         p.innerHTML += type.charAt(0).toUpperCase()+type.slice(1)+"<br/>"
         legend.append(p)
@@ -273,7 +273,7 @@ function setImage(name, top, left, bottom, right){
         }
         let container = document.getElementById("floorEdit")
         let image = document.createElement("img")
-        image.src = "img/"+name+".png"
+        image.src = "/static/img/"+name+".png"
         if(bottom-top<=right-left){
             image.style.height = bottom-top
             image.style.left = ((right+left)/2)-((bottom-top)/natImages[name][1]*natImages[name][0]/2)
