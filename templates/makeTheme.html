@@ -28,14 +28,15 @@
         </div>
 
         <script>
-            function redirectToFinal() {
-                console.log("Redirecting to Final");
-                window.location.href = "{{ url_for('final') }}";
+            function redirectToFSM() {
+                console.log("Redirecting to FSM");
+                saveTheme();
+                window.location.href = "{{ url_for('state_machine') }}";
             }
         </script>
 
-        <button id="previous" onclick="redirectToFinal()"> Puzzle Progression? </button>
-        <button id="submit"> Finalize? </button>
+        <button id="previous" onclick="redirectToFSM()"> Puzzle Progression </button>
+        <!-- <button id="submit"> Finalize? </button> -->
         <script src="{{url_for('static', filename='js/makeTheme.js')}}"></script>
     </body>
 </html>

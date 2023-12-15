@@ -403,11 +403,6 @@ function setSelection(dropdown, value){
     }
 }
 
-function nextPage(){
-    saveRoom();
-    // window.location.replace('')
-}
-
 function prevPage(){
     saveRoom();
     // window.location.replace('')

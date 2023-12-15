@@ -119,7 +119,19 @@
             newState.appendChild(rightButton);
         }
 
+        function redirectToLayout() {
+            console.log("Redirecting to Layout");
+            window.location.href = "{{ url_for('build') }}";
+        }
+
+        function redirectToTheme() {
+            console.log("Redirecting to Theme");
+            window.location.href = "{{ url_for('theme') }}";
+        }
+
     </script>
-    
+
+    <button id="previous" style="position: absolute; right:50%; bottom:5%; margin:0" onclick="redirectToLayout()">To Room Layout</button> 
+    <button id="previous" style="position: absolute; left:50%; bottom:5%; margin:0" onclick="redirectToTheme()">To Theme</button>
 </body>
 </html>

@@ -25,9 +25,20 @@
         <map name="floorMap" id="floorMap"></map>
         <img id="testimg" usemap="#floorMap">
 
-        <button id="previous"> Start? </button>
-        <button id="submit"> Puzzle progression? </button>
-        <button id="fsm" type="button" onclick="window.location.href = '/state_machine' ; " class="button">FSM</button>
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
+        <script>
+            function redirectToFSM() {
+                console.log("Redirecting to FSM");
+                saveRoom();
+                window.location.href = "{{ url_for('state_machine') }}";
+            }
+            function redirectToMain() {
+                console.log("Redirecting to Main");
+                saveRoom();
+                window.location.href = "{{ url_for('main') }}";
+            }
+        </script>
+        <button id="previous" onclick="redirectToMain()"> Start </button>
+        <button id="submit" onclick="redirectToFSM()"> Puzzle Progression </button>
     </body>
 </html>

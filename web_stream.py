@@ -98,7 +98,7 @@ def state_machine():
     
     return render_template('fsm.html', sections=sections, file_content=file_content)
 
-@app.route('/roomLayout')
+@app.route('/roomLayout', methods=["GET", "POST"])
 def build():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')
@@ -132,7 +132,7 @@ def final():
 
     return render_template('finalRoom.html', sections=sections, file_content=file_content, room_state=room_state)
 
-@app.route('/makeTheme')
+@app.route('/makeTheme', methods=["GET", "POST"])
 def theme():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')

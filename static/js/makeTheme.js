@@ -24,8 +24,6 @@ function updateCustom(){
 }
 
 window.onload = () => {
-    document.getElementById("submit").addEventListener("click", ()=>{nextPage()})
-    document.getElementById("previous").addEventListener("click", ()=>{prevPage()})
     loadTheme();
     setTheme();
     document.getElementsByName("theme").forEach(element => {
@@ -52,14 +50,6 @@ function loadTheme(){
         theme = {"name": "dark"}
         document.getElementById("dark").checked = true;
     }
-}
-
-function nextPage(){
-    saveTheme();
-}
-
-function prevPage(){
-    saveTheme();
 }
 
 function saveTheme(){
