@@ -1,0 +1,81 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/roomLayout.css">
+    </head>
+    <body>
+        <title>Robot Escape Room Designer</title>
+
+
+        <canvas id="finalRoomCanvas" width="700px" height="700px"></canvas>
+
+        <script>
+        var roomState = {{ room_state | tojson | safe }};
+        console.log("Room State:", roomState);
+
+        function drawRoom() {
+            const canvas = document.getElementById("finalRoomCanvas");
+            const context = canvas.getContext("2d");
+            const size = 100; // Adjust this based on your requirements
+        
+            // Clear the canvas
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        
+            // Iterate over each space in the room_state
+            for (let i = 0; i < roomState.length; i++) {
+                for (let j = 0; j < roomState[i].length; j++) {
+                    const space = roomState[i][j];
+        
+                    // Calculate coordinates for the current space
+                    const x = size * (j + 1);
+                    const y = size * (i + 1);
+        
+                    // Draw floor if it exists
+                    if (space.floor !== null) {
+                        context.beginPath();
+                        context.rect(x, y, size, size);
+                        context.stroke();
+                    }
+        
+                    // Draw walls based on the walls array [top, right, bottom, left]
+                    if (space.walls[0] !== null) {
+                        context.beginPath();
+                        context.moveTo(x, y);
+                        context.lineTo(x + size, y);
+                        context.stroke();
+                    }
+        
+                    if (space.walls[1] !== null) {
+                        context.beginPath();
+                        context.moveTo(x + size, y);
+                        context.lineTo(x + size, y + size);
+                        context.stroke();
+                    }
+        
+                    if (space.walls[2] !== null) {
+                        context.beginPath();
+                        context.moveTo(x, y + size);
+                        context.lineTo(x + size, y + size);
+                        context.stroke();
+                    }
+        
+                    if (space.walls[3] !== null) {
+                        context.beginPath();
+                        context.moveTo(x, y);
+                        context.lineTo(x, y + size);
+                        context.stroke();
+                    }
+                }
+            }
+        }        
+
+        // Call the drawRoom function when the page is loaded
+        window.addEventListener('DOMContentLoaded', function() {
+            drawRoom();
+        });
+        </script>
+
+
+        <script src="{{url_for('static', filename='js/roomState.js')}}"></script>
+          
+    </body>
+</html>

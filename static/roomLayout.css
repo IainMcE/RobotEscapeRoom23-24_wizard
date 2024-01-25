@@ -14,6 +14,13 @@
     bottom: 5%;
 }
 
+#fsm{
+    position: absolute;
+    left: 60%;
+    bottom: 5%;
+}
+
+
 .disabled{
     opacity: 0.4;
     pointer-events: none;

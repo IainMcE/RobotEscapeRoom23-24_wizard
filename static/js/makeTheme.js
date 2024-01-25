@@ -24,8 +24,6 @@ function updateCustom(){
 }
 
 window.onload = () => {
-    document.getElementById("submit").addEventListener("click", ()=>{nextPage()})
-    document.getElementById("previous").addEventListener("click", ()=>{prevPage()})
     loadTheme();
     setTheme();
     document.getElementsByName("theme").forEach(element => {
@@ -38,7 +36,7 @@ window.onload = () => {
 
 function loadTheme(){
     let themeString = sessionStorage.getItem("theme")
-    if(themeString != null){
+    if(themeString!== null){
         let theme = JSON.parse(themeString)
         document.getElementById(theme["name"]).checked = true;
         // if custom set the input values
@@ -49,17 +47,9 @@ function loadTheme(){
             updateCustom();
         }
     }else{
+        theme = {"name": "dark"}
         document.getElementById("dark").checked = true;
     }
-
-}
-
-function nextPage(){
-    saveTheme();
-}
-
-function prevPage(){
-    saveTheme();
 }
 
 function saveTheme(){

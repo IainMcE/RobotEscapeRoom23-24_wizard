@@ -1,0 +1,58 @@
+#script {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#fsm {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    margin-top: 20px;
+}
+
+.state {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 10px;
+    background-color: navy;
+    color: white;
+    text-align: center;
+}
+
+button {
+    margin-right: 7px; 
+}
+
+.state button {
+    margin: 0 auto;
+}
+
+.draggable {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: move;
+}
+
+#script{
+    background: navy;
+    color: white;
+}
+
+
