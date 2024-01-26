@@ -148,6 +148,20 @@ def theme():
 
     return render_template('makeTheme.html', sections=sections, file_content=file_content, theme=theme)
 
+@app.route('/finalProduct', methods=["GET", "POST"])
+def finalProduct():
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+
+    # Retrieve the room state from the session
+    room_state = session.get('room_state')
+
+    # Retrieve the room state from the session
+    theme = session.get('CSStheme')
+
+    return render_template('finalProduct.html', sections=sections, file_content=file_content, room_state=room_state, theme=theme)
+
 # --- Flask templates Ends ---
 
 
