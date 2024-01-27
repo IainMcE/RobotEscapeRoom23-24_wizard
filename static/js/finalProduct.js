@@ -1,6 +1,7 @@
 let room;
 let height, width;
 let connectorCounts = {"4way": 0, "cornerTop": 0, "cornerBottom":0, "sideTop":0, "sideBottom":0};
+let wallCounts = {};
 
 window.addEventListener('DOMContentLoaded', ()=>{
     loadRoom();
@@ -15,6 +16,7 @@ function loadRoom(){
         drawRoom();
         pieceCounts();
         console.log(connectorCounts);
+        console.log(wallCounts);
     }else{
         //throw error?
     }
@@ -89,6 +91,28 @@ function pieceCounts(){
                 }else if(set[2] || set[3]){
                     connectorCounts["cornerTop"]++;
                     connectorCounts["cornerBottom"]++;
+                }
+            }
+        }
+    }
+    for(let i = 0; i<height; i++){
+        for(let j = 0; j<width; j++){
+            if(room[i][j].floor!=null){
+                //floors
+                if(room[i][j].floor in wallCounts){
+                    wallCounts[room[i][j].floor]++;
+                }else{
+                    wallCounts[room[i][j].floor] = 1;
+                }
+                //walls
+                for(let k=0; k<4; k++){
+                    if(room[i][j].walls[k] != null){
+                        if(room[i][j].walls[k] in wallCounts){
+                            wallCounts[room[i][j].walls[k]]++;
+                        }else{
+                            wallCounts[room[i][j].walls[k]] = 1;
+                        }
+                    }
                 }
             }
         }
