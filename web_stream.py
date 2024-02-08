@@ -96,7 +96,7 @@ def state_machine():
     file_content = session.get('file_content', '')
     sections = separate_sections(file_content)
     
-    return render_template('fsm.html', sections=sections, file_content=file_content)
+    return render_template('htnp.html', sections=sections, file_content=file_content)
 
 @app.route('/roomLayout', methods=["GET", "POST"])
 def build():
