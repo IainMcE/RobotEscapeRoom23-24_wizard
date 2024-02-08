@@ -1,6 +1,7 @@
 # Import necessary libraries
 from flask import Flask, render_template, redirect, request, url_for, session
 from flask_session import Session
+import pdfkit
 
 # Initialize the Flask app
 app = Flask(__name__)
@@ -160,7 +161,7 @@ def finalProduct():
     # Retrieve the room state from the session
     theme = session.get('CSStheme')
 
-    return render_template('finalProduct.html', sections=sections, file_content=file_content, room_state=room_state, theme=theme)
+    return render_template('finalProduct.html', sections=sections, file_content=file_content, room_state=room_state, theme=theme, pdfkit=pdfkit)
 
 # --- Flask templates Ends ---
 
