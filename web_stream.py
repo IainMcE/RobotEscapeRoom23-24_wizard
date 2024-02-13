@@ -1,5 +1,5 @@
 # Import necessary libraries
-from flask import Flask, render_template, redirect, request, url_for, session
+from flask import Flask, render_template, redirect, request, url_for, session, send_file
 from flask_session import Session
 import pdfkit
 
@@ -167,6 +167,9 @@ def finalProduct():
 
 @app.route('/generatePDF', methods=['POST'])
 def generate_pdf():
+    canvas_content = request.form.get('canvas_content')
+    console_output = request.form.get('console_output')
+    
     config = pdfkit.configuration(wkhtmltopdf="C:\\Users\\Kaelin\\OneDrive - Worcester Polytechnic Institute (wpi.edu)\\Desktop\\RobotEscapeRoom23-24_wizard\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
     
     htmlfile = app.config['TEMPLATE_FOLDER'] + 'finalProduct.html'
@@ -176,7 +179,7 @@ def generate_pdf():
     # Convert to pdffile
     pdfkit.from_file(htmlfile, pdffile, configuration=config, options={"enable-local-file-access": ""})
     
-    return 'PDF generated successfully'
+    return send_file("pdfs\demo.pdf", as_attachment=False)
 
 # --- Flask templates Ends ---
 

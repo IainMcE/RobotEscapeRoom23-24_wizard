@@ -1,0 +1,88 @@
+#buttons-container {
+    margin-top: 20px;
+}
+
+:root{
+    --size: 100px;
+    --difference: 40px;
+}
+
+#previous{
+    position: absolute;
+    right: 50%;
+    bottom: 5%;
+}
+
+#generate-pdf{
+    position: absolute;
+    right: 53%;
+    bottom: 5%;
+}
+
+#submit{
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+}
+
+#fsm{
+    position: absolute;
+    left: 60%;
+    bottom: 5%;
+}
+
+
+.disabled{
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+#pieces{
+    background: green;
+    color: white;
+    width:20%;
+    height: 70%;
+    position: absolute;
+    left: 5%;
+    padding: 2%;
+}
+
+canvas{
+    position: absolute;
+    right: 5%;
+    background-color: tan;
+}
+
+#floorEdit, #floorMap, #testimg{
+    position: absolute;
+    right:5%;
+    width: 700px;
+    height: 700px;
+}
+
+button{
+    position:absolute;
+    z-index: 1;
+}
+
+#floorDropdown, #wallDropdown{
+    position: absolute;
+    background-color: cyan;
+    z-index: 1;
+    visibility: hidden;
+}
+
+img{
+    position: absolute;
+}
+
+p{
+    position: relative;
+    height: 50px;
+    left: 50px;
+}
+
+p>img{
+    background-color: white;
+    left: -55px
+}

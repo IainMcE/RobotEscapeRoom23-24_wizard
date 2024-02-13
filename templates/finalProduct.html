@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link type="text/css" rel="stylesheet" href="static/roomLayout.css">
-        <style>
-            #download{
-                position: absolute;
-                left: 15%;
-                top: 50%;
-            }
-        </style>
+        <link type="text/css" rel="stylesheet" href="static/finalProduct.css">
     </head>
     <body>
-        <form action="/generatePDF" method="post">
-            <input type="submit" value="Generate PDF">
-        </form>
+        <div id="buttons-container">
+            <button id="previous" onclick="redirectToRoomLayout()"> Layout </button>
+            <form id="pdfForm" action="/generatePDF" method="post">
+                <input type="hidden" id="canvasContent" name="canvas_content">
+                <input type="hidden" id="consoleOutput" name="console_output">
+                <input type="submit" id="generate-pdf" value="Generate PDF">
+            </form>
+        </div>
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
         <script src="/static/js/finalProduct.js"></script>
         <script>
@@ -25,7 +23,5 @@
                 window.location.href = "/roomLayout";
             }
         </script>
-        <button id="previous" onclick="redirectToRoomLayout()"> Layout </button>
-        <button id="download" onclick="downloadPDF()">Download Piece Counts</button>
     </body>
 </html>
