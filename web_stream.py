@@ -1,11 +1,14 @@
 # Import necessary libraries
 from flask import Flask, render_template, redirect, request, url_for, session
 from flask_session import Session
+import pdfkit
 
 # Initialize the Flask app
 app = Flask(__name__)
 
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['TEMPLATE_FOLDER'] = 'templates/'
+app.config['PDF_FOLDER'] = 'pdfs/'
 Session(app)
 app.secret_key = 'RobotEscapeRoomMQP2324'
 
@@ -147,6 +150,33 @@ def theme():
         session['CSStheme'] = theme
 
     return render_template('makeTheme.html', sections=sections, file_content=file_content, theme=theme)
+
+@app.route('/finalProduct', methods=["GET", "POST"])
+def finalProduct():
+    # Retrieve the file content from the session
+    file_content = session.get('file_content', '')
+    sections = separate_sections(file_content)
+
+    # Retrieve the room state from the session
+    room_state = session.get('room_state')
+    
+    # Retrieve the room state from the session
+    theme = session.get('CSStheme')
+    
+    return render_template('finalProduct.html', sections=sections, file_content=file_content, room_state=room_state, theme=theme)
+
+@app.route('/generatePDF', methods=['POST'])
+def generate_pdf():
+    config = pdfkit.configuration(wkhtmltopdf="C:\\Users\\Kaelin\\OneDrive - Worcester Polytechnic Institute (wpi.edu)\\Desktop\\RobotEscapeRoom23-24_wizard\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+    
+    htmlfile = app.config['TEMPLATE_FOLDER'] + 'finalProduct.html'
+    pdffile = app.config['PDF_FOLDER'] + 'demo.pdf'
+    print(htmlfile, pdffile)
+    
+    # Convert to pdffile
+    pdfkit.from_file(htmlfile, pdffile, configuration=config, options={"enable-local-file-access": ""})
+    
+    return 'PDF generated successfully'
 
 # --- Flask templates Ends ---
 

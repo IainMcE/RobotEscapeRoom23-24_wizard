@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/roomLayout.css">
+        <style>
+            #download{
+                position: absolute;
+                left: 15%;
+                top: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <form action="/generatePDF" method="post">
+            <input type="submit" value="Generate PDF">
+        </form>
+        <canvas id="roomCanvas" width="700px" height="700px"></canvas>
+        <script src="/static/js/finalProduct.js"></script>
+        <script>
+            var pdfkit = '{{ pdfkit }}';
+        </script>
+        <script>
+            function redirectToRoomLayout() { //for final: go to theme
+                console.log("Redirecting to Layout");
+                window.location.href = "/roomLayout";
+            }
+        </script>
+        <button id="previous" onclick="redirectToRoomLayout()"> Layout </button>
+        <button id="download" onclick="downloadPDF()">Download Piece Counts</button>
+    </body>
+</html>
