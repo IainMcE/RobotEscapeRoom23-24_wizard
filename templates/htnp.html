@@ -28,6 +28,21 @@
     <div class="diagram-container" id="diagram10"></div> -->
 </div>
 
+<script>
+   function redirectToLayout() {
+        console.log("Redirecting to Layout");
+        saveProgression();
+        window.location.href = "{{ url_for('build') }}";
+    }
+
+    function redirectToTheme() {
+        console.log("Redirecting to Theme");
+        saveProgression();
+        window.location.href = "{{ url_for('theme') }}";
+    }
+</script>
+<button id="previous" onclick="redirectToLayout()"> To Room Layout </button>
+<button id="submit" onclick="redirectToTheme()"> To Theme </button>
 <script src="static/js/htnp2.js"></script>
 </body>
 </html>

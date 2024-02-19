@@ -5,6 +5,7 @@ let wallCounts = {};
 
 window.addEventListener('DOMContentLoaded', ()=>{
     loadRoom();
+    generatePyFile();
 });
 
 function loadRoom(){
@@ -221,3 +222,73 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
 function downloadPDF(){
 
 }
+
+function generatePyFile(){  //TODO switch cases for room device names and message values
+    var stringProgression = sessionStorage.getItem("puzzleProgression");
+    if(stringProgression === null){
+        console.log("no puzzle progression");
+        return;
+    }
+    var jsonProg = JSON.parse(stringProgression);
+    var pythonOutput = "puzzleList = [";
+    for(var i = 0; i<jsonProg.length; i++){
+        console.log(jsonProg[i])
+        pythonOutput += "makeResponse(\""+jsonProg[i].id+"\", ["
+
+        var inputs = jsonProg[i].Inputs;
+        for(var j = 0; j<inputs.length; j++){
+            pythonOutput +="\""+inputs[j]+"\""
+            if(j<inputs.length-1 || jsonProg[i].RoomInput !== null){
+                pythonOutput += ", "
+            }
+        }
+        if(jsonProg[i].RoomInput !== null){
+            pythonOutput += "\""+jsonProg[i].RoomInput+"\""
+        }
+
+
+        pythonOutput+="], ["
+
+        var outputs = jsonProg[i].Outputs;
+        for(var j = 0; j<outputs.length; j++){
+            pythonOutput += "[\"publish\", [\""+outputs[j]+"\", \""+jsonProg[i].id+"\"]]";
+            if(j<outputs.length-1 || jsonProg[i].RoomOutput !== null){
+                pythonOutput += ", ";
+            }
+        }
+        if(jsonProg[i].RoomOutput !== null){
+            ///SUBJECT TO CHANGE
+            pythonOutput += "[\"publish\", [\"room/"+jsonProg[i].RoomOutput+"\", \"Some value\"]]"
+            //TODO create a table of commands for each room type
+        }
+        pythonOutput+="])"
+
+        if(jsonProg[i].RoomInput !== null){
+            pythonOutput += ",\n    makeResponse(\"room/"+jsonProg[i].RoomInput+"\", [\"True\"], [\"publish\" [\""+jsonProg[i].id
+                    +"\", \""+jsonProg[i].RoomInput+"\"]])"
+        }
+
+        if(i<jsonProg.length-1){
+            pythonOutput+=",\n    "
+        }
+    }
+    pythonOutput += "]"
+    document.getElementById("pyOutput").innerText = "Will have extra stuff for the makeResponse class, "+
+            "and actually running though the puzzleList\n"+pythonOutput;
+}
+
+// node -> python
+// 	each node is a task
+// 		each object input is another task
+// 		each child outputs to notify this task
+
+// 	makeResponse(nodeID, [""], []), 
+
+// 	Json objects = {}
+// 	python new array = []
+// 	array[0] = objects[i].id
+// 	array[1] = objects[i].inputs with some modifications?
+// 	# array[2] = objects[i].outputs + object[i].roomOutput
+// 	for object in outpus:
+// 		list += [publish, [object, this.id]]
+// 	list += [publish, [roomOutput, open || close || on || ...]]

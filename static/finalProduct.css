@@ -86,3 +86,8 @@ p>img{
     background-color: white;
     left: -55px
 }
+
+#pyOutput{
+    width: 30%;
+    height: 70%;
+}

@@ -33,10 +33,15 @@
                 saveTheme();
                 window.location.href = "{{ url_for('state_machine') }}";
             }
+            function redirectToFinal() {
+                console.log("Redirecting to Final");
+                saveTheme();
+                window.location.href = "{{ url_for('finalProduct') }}";
+            }
         </script>
 
         <button id="previous" onclick="redirectToFSM()"> Puzzle Progression </button>
-        <!-- <button id="submit"> Finalize? </button> -->
+        <button id="submit" onclick="redirectToFinal()"> Finalize </button>
         <script src="{{url_for('static', filename='js/makeTheme.js')}}"></script>
     </body>
 </html>

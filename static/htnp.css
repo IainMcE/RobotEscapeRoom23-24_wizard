@@ -49,3 +49,14 @@
 #main{
     height: 600px;
 }
+
+#previous{
+    position: absolute;
+    right: 50%;
+    bottom: 5%;
+}
+#submit{
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+}

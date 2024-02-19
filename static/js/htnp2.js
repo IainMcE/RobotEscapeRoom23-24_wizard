@@ -8,12 +8,74 @@ let svgTop = main.getBoundingClientRect().top;
 let svgLeft = main.getBoundingClientRect().left;
 let id = 0;
 let nodes = [];
-let outputTypes = ["none", "pressure plate", "panel", "doorway"]
-let width = 4
+let outputs = ["panel", "doorway"]
+let outputTypes = ["None"]
+let inputs = ["pressure plate"]
+let inputTypes = ["None"]
+let rowWidth = 4
 
-function createDropdown(element){
-    for(i = 0; i<outputTypes.length; i++){
-        type = outputTypes[i]
+let room;
+let height, width;
+
+window.onload = function(){
+    setDropdownLists();
+}
+
+function setDropdownLists(){
+    let stringRoom = sessionStorage.getItem("room")
+    if(stringRoom === null){
+        return
+    }
+    room = JSON.parse(stringRoom)
+    height = room.length;
+    width = room[0].length;
+    let wallCounts = {};
+    for(let i = 0; i<height; i++){
+        for(let j = 0; j<width; j++){
+            if(room[i][j].floor!=null){
+                //floors
+                if(room[i][j].floor in wallCounts){
+                    wallCounts[room[i][j].floor]++;
+                }else{
+                    wallCounts[room[i][j].floor] = 1;
+                }
+                //walls
+                for(let k=0; k<4; k++){
+                    if(room[i][j].walls[k] != null){
+                        if(room[i][j].walls[k] in wallCounts){
+                            wallCounts[room[i][j].walls[k]]++;
+                        }else{
+                            wallCounts[room[i][j].walls[k]] = 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    delete wallCounts["floor"]
+    delete wallCounts["wall"]
+    console.log(wallCounts);
+    var keys = Object.keys(wallCounts);
+    for(var i = 0; i<keys.length; i++){
+        var split = keys[i].split(" ");
+        var reconstitute = ""
+        for(let j = 0; j<split.length; j++){
+            reconstitute += split[j].charAt(0).toUpperCase() + split[j].slice(1)+" "
+        }
+        for(let k = 0; k<wallCounts[keys[i]]; k++){
+            if(inputs.includes(keys[i])){
+                inputTypes.push(reconstitute+(k+1));    
+            }else{
+                outputTypes.push(reconstitute+(k+1));
+            }
+        }
+
+    }
+}
+
+function createDropdown(element, list){
+    for(i = 0; i<list.length; i++){
+        type = list[i]
         option = document.createElement("option")
         option.value = type
         option.innerText = type.charAt(0).toUpperCase()+type.slice(1)
@@ -32,15 +94,15 @@ function createNode(){
     //background:
     //object: id, name, room piece, children, outputs
     const node = {
-        "id": "node"+id, "name": "Node "+id, "RoomOutput": null, "Inputs": [], "Outputs":[]
+        "id": "node"+id, "name": "Node "+id, "RoomInput": null, "RoomOutput": null, "Inputs": [], "Outputs":[]
     };
     nodes.push(node);
     
     let mainBox = document.createElement("div");
     mainBox.id = "node"+id;
     mainBox.classList.toggle("mainNode", true);
-    mainBox.style.left = ((id%width)*275 +100)+'px';
-    mainBox.style.top = (Math.floor(id/width)*150 + 125 ) + 'px';
+    mainBox.style.left = ((id%rowWidth)*275 +100)+'px';
+    mainBox.style.top = (Math.floor(id/rowWidth)*150 + 125 ) + 'px';
     mainBox.appendChild(document.createElement("p"));
     mainBox.getElementsByTagName("p")[0].innerText = node.name;
     main.appendChild(mainBox);
@@ -54,13 +116,28 @@ function createNode(){
         updateNode(mainBox.id);
     })
 
-    //dropdown
-    let dropdown = document.createElement("select");
-    createDropdown(dropdown);
-    mainBox.appendChild(dropdown);
-    dropdown.addEventListener("change", ()=>{
-        console.log(dropdown.value);
-        node.RoomOutput = dropdown.value;
+    //dropdowns
+    let dropdownIn = document.createElement("select");
+    createDropdown(dropdownIn, inputTypes);
+    mainBox.appendChild(dropdownIn);
+    dropdownIn.addEventListener("change", ()=>{
+        //console.log(dropdownIn.value);
+        if(dropdownIn.value !== "None"){
+            node.RoomInput = dropdownIn.value.replaceAll(" ", "");
+        }else{
+            node.RoomInput = null;
+        }
+    })
+    let dropdownOut = document.createElement("select");
+    createDropdown(dropdownOut, outputTypes);
+    mainBox.appendChild(dropdownOut);
+    dropdownOut.addEventListener("change", ()=>{
+        //console.log(dropdownOut.value);
+        if(dropdownOut.value !== "None"){
+            node.RoomOutput = dropdownOut.value.replaceAll(" ", "");
+        }else{
+            node.RoomOutput = null;
+        }
     })
 
     //in/output boxes
@@ -68,8 +145,8 @@ function createNode(){
     let inputBox = document.createElement("div");
     inputBox.id = "node"+id+"input";
     inputBox.classList.toggle("ioBox", true);
-    inputBox.style.left = ((id%width)*275 +100-40)+'px';
-    inputBox.style.top = (Math.floor(id/width)*150 + 125+20 ) + 'px';
+    inputBox.style.left = ((id%rowWidth)*275 +100-40)+'px';
+    inputBox.style.top = (Math.floor(id/rowWidth)*150 + 125+20 ) + 'px';
     main.appendChild(inputBox);
 
     inputBox.addEventListener("click", (e)=>{
@@ -79,8 +156,8 @@ function createNode(){
     let outputBox = document.createElement("div");
     outputBox.id = "node"+id+"output";
     outputBox.classList.toggle("ioBox", true);
-    outputBox.style.left = ((id%width)*275 +100+152)+'px';
-    outputBox.style.top = (Math.floor(id/width)*150 + 125+20 ) + 'px';
+    outputBox.style.left = ((id%rowWidth)*275 +100+152)+'px';
+    outputBox.style.top = (Math.floor(id/rowWidth)*150 + 125+20 ) + 'px';
     main.appendChild(outputBox);
 
     outputBox.addEventListener("click", (e)=>{
@@ -232,3 +309,7 @@ function removeLine(connections){
 }
 
 //TODO send to flask server on page leave (yknow, call before the redirect call on the nav buttons)
+function saveProgression(){
+    var stringProgression = JSON.stringify(nodes);
+    sessionStorage.setItem("puzzleProgression", stringProgression);
+}
