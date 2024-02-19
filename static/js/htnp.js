@@ -3,6 +3,7 @@ let container = null;
 const diagrams = [];
 
 function addDiagram() {
+    console.log(diagrams)
     const containerId = `diagram${diagrams.length + 1}`;
     container = d3.select(`#${containerId}`)
         .append("svg")
@@ -20,25 +21,12 @@ function addDiagram() {
 
         const data = {
             name: `Root Task ${diagrams.length + 1}`,
-            children: [
-                {
-                    name: `Subtask ${diagrams.length + 1}.1`,
-                    children: [
-                        { name: `Subtask ${diagrams.length + 1}.1.1` },
-                        { name: `Subtask ${diagrams.length + 1}.1.2` }
-                    ]
-                },
-                {
-                    name: `Subtask ${diagrams.length + 1}.2`,
-                    children: [
-                        { name: `Subtask ${diagrams.length + 1}.2.1` },
-                        { name: `Subtask ${diagrams.length + 1}.2.2` }
-                    ]
-                }
-            ]
         };
     
-    container.on("click", () => removeDiagram(diagrams.length));
+    container.on("contextmenu", (e) => {
+        e.preventDefault();
+        removeDiagram(diagrams.length)
+    });
 
     const treeLayout = d3.tree().size([150, 150]);
 
@@ -62,7 +50,6 @@ function addDiagram() {
         .append("g")
         .attr("class", "node")
         .attr("transform", d => `translate(${d.y},${d.x})`)
-        .on("dblclick", editNode);
 
     nodes.append("rect")
         .attr("width", 60)
@@ -95,9 +82,9 @@ function addDiagram() {
 
     update();
 
-    container.on("mousedown", startDragLine);
-    container.on("mousemove", handleMouseMove);
-    container.on("mouseup", stopDragLine);
+    // container.on("mousedown", startDragLine);
+    // container.on("mousemove", handleMouseMove);
+    // container.on("mouseup", stopDragLine);
 }
 
 // Create marker definition (Arrowhead)
@@ -153,7 +140,8 @@ function removeDiagram() {
         const lastDiagram = diagrams.pop();
         d3.select(`#${lastDiagram.containerId}`).remove(); 
         update();
-}}
+    }
+}
 
 document.getElementById('addDiagramButton').addEventListener('click', addDiagram);
 document.getElementById('removeDiagramButton').addEventListener('click', removeDiagram);

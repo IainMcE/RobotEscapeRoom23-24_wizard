@@ -26,3 +26,26 @@
   border-radius: 8px; 
   margin-bottom: 2px; 
 }
+
+/*Iain's stuff*/
+.mainNode{
+    width: 150px;
+    height: 80px;
+    border: 3px solid black;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.ioBox{
+    width: 40px;
+    height:40px;
+    border: 1px solid black;
+    position: absolute;
+}
+
+#main{
+    height: 600px;
+}
