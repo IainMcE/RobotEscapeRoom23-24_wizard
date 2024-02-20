@@ -273,8 +273,8 @@ function generatePyFile(){  //TODO switch cases for room device names and messag
         }
     }
     pythonOutput += "]"
-    document.getElementById("pyOutput").innerText = "Will have extra stuff for the makeResponse class, "+
-            "and actually running though the puzzleList\n"+pythonOutput;
+    // document.getElementById("pyOutput").innerText = "Will have extra stuff for the makeResponse class, "+
+    //         "and actually running though the puzzleList\n"+pythonOutput;
 }
 
 // Kaelin stuff
@@ -304,10 +304,68 @@ function displayCounts(obj, title) {
     outputDiv.appendChild(container);
 }
 
+function generateAndDownloadPythonFile() {
+    var stringProgression = sessionStorage.getItem("puzzleProgression");
+    if (stringProgression === null) {
+        console.log("No puzzle progression data found.");
+        return;
+    }
+
+    var jsonProg = JSON.parse(stringProgression);
+    var puzzleList = [];
+
+    var pythonCode = "puzzleList = [\n";
+
+    for (var i = 0; i < jsonProg.length; i++) {
+        var puzzle = jsonProg[i];
+        var inputs = JSON.stringify(puzzle.Inputs);
+        var outputs = JSON.stringify(puzzle.Outputs); 
+
+        var puzzleString = `makeResponse("${puzzle.id}", ${inputs}, ${outputs}`;
+    
+        if (puzzle.RoomInput !== null || puzzle.RoomOutput !== null) {
+            puzzleString += ', [';
+
+            if (puzzle.RoomInput !== null) {
+                puzzleString += `"room/${puzzle.RoomInput}", "Some value"`;
+            }
+
+            if (puzzle.RoomOutput !== null) {
+                if (puzzle.RoomInput !== null) {
+                    puzzleString += ', ';
+                }
+                puzzleString += `"room/${puzzle.RoomOutput}", "Some value"`;
+            }
+
+            puzzleString += ']';
+        }
+
+        puzzleString += ')';
+        
+        puzzleList.push(puzzleString);
+    }
+
+    pythonCode += puzzleList.join(',\n') + "\n];";
+
+    var blob = new Blob([pythonCode], { type: 'text/plain' });
+
+    var a = document.createElement('a');
+    a.href = window.URL.createObjectURL(blob);
+    a.download = 'puzzle_list.py';
+    a.textContent = 'Download Puzzle List';
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+document.getElementById('downloadButton').addEventListener('click', generateAndDownloadPythonFile);
+
 window.addEventListener('DOMContentLoaded', () => {
     displayCounts(connectorCounts, 'Connector Counts');
     displayCounts(wallCounts, 'Wall Counts');
 });
+
 
 // node -> python
 // 	each node is a task
