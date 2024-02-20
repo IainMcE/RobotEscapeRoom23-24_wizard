@@ -62,46 +62,7 @@ def separate_sections(input_content):
     return sections
 
 # --- Flask templates ---
-@app.route('/')
-def main():
-    return render_template('main.html')
-
-@app.route('/verify', methods=['POST'])
-def verify():
-    if 'fileInput' not in request.files:
-        return 'No file part'
-
-    file = request.files['fileInput']
-
-    if file.filename == '':
-        return 'No selected file'
-
-    file_content = file.read().decode('utf-8')
-
-    print("File Content:")
-    print(file_content)
-    
-    session['file_content'] = file_content
-
-    # Use separate_sections function to process the content
-    sections = separate_sections(file_content)
-
-    # Print sections for further debugging
-    print("Sections:")
-    print(sections)
-        
-    message = 'Form submission successful!'    
-    return render_template('confirmation.html', message=message)
-
-@app.route('/state_machine', methods=["GET", "POST"])
-def state_machine():
-    # Retrieve the file content from the session
-    file_content = session.get('file_content', '')
-    sections = separate_sections(file_content)
-    
-    return render_template('htnp.html', sections=sections, file_content=file_content)
-
-@app.route('/roomLayout', methods=["GET", "POST"])
+@app.route('/', methods=["GET", "POST"])
 def build():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')
@@ -117,39 +78,13 @@ def build():
 
     return render_template('roomLayout.html', sections=sections, file_content=file_content, room_state=room_state)
 
-@app.route('/finalRoom')
-def final():
+@app.route('/planner', methods=["GET", "POST"])
+def planner():
     # Retrieve the file content from the session
     file_content = session.get('file_content', '')
     sections = separate_sections(file_content)
     
-    # Retrieve the room state from the session
-    room_state = session.get('room_state')
-
-    # If room_state is not in the session, set it
-    if room_state is None:
-        room_state = session.get('room_state')
-        session['room_state'] = room_state
-        
-    print("Session Contents:", session)
-
-    return render_template('finalRoom.html', sections=sections, file_content=file_content, room_state=room_state)
-
-@app.route('/makeTheme', methods=["GET", "POST"])
-def theme():
-    # Retrieve the file content from the session
-    file_content = session.get('file_content', '')
-    sections = separate_sections(file_content)
-
-    # Retrieve the room state from the session
-    theme = session.get('CSStheme')
-
-    # If theme is not in the session, set it
-    if theme is None:
-        theme = '{"name":"dark"}'
-        session['CSStheme'] = theme
-
-    return render_template('makeTheme.html', sections=sections, file_content=file_content, theme=theme)
+    return render_template('htnp.html', sections=sections, file_content=file_content)
 
 @app.route('/finalProduct', methods=["GET", "POST"])
 def finalProduct():

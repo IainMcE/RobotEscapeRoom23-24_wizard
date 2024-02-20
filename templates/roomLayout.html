@@ -27,18 +27,13 @@
 
         <script src="{{url_for('static', filename='js/roomLayout.js')}}"></script>
         <script>
-            function redirectToFSM() {
-                console.log("Redirecting to FSM");
+            function redirectToHTNP() {
+                console.log("Redirecting to HTNP");
                 saveRoom();
-                window.location.href = "{{ url_for('state_machine') }}";
+                window.location.href = "{{ url_for('planner') }}";
             }
-            function redirectToMain() {
-                console.log("Redirecting to Main");
-                saveRoom();
-                window.location.href = "{{ url_for('main') }}";
-            }
+
         </script>
-        <button id="previous" onclick="redirectToMain()"> Start </button>
-        <button id="submit" onclick="redirectToFSM()"> Puzzle Progression </button>
+        <button id="submit" onclick="redirectToHTNP()"> Puzzle Progression </button>
     </body>
 </html>

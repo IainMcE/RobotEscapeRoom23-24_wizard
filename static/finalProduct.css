@@ -1,5 +1,5 @@
 #buttons-container {
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 :root{
@@ -7,30 +7,27 @@
     --difference: 40px;
 }
 
-#previous{
+#previous {
     position: absolute;
-    right: 50%;
+    left: 54%;
     bottom: 5%;
+    z-index: 1;
 }
 
-#generate-pdf{
+#generate-pdf {
     position: absolute;
-    right: 53%;
+    left: 50%; 
+    transform: translateX(-50%);
     bottom: 5%;
+    z-index: 1;
 }
 
-#submit{
+#submit {
     position: absolute;
-    left: 50%;
+    right: 54%;
     bottom: 5%;
+    z-index: 1;
 }
-
-#fsm{
-    position: absolute;
-    left: 60%;
-    bottom: 5%;
-}
-
 
 .disabled{
     opacity: 0.4;

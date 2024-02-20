@@ -5,7 +5,6 @@
     </head>
     <body>
         <div id="buttons-container">
-            <button id="previous" onclick="redirectToRoomLayout()"> Layout </button>
             <form id="pdfForm" action="/generatePDF" method="post">
                 <input type="hidden" id="canvasContent" name="canvas_content">
                 <input type="hidden" id="consoleOutput" name="console_output">
@@ -16,15 +15,22 @@
 
         </pre>
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
-        <script src="/static/js/finalProduct.js"></script>
+
+        <div id="output"></div>
         <script>
             var pdfkit = '{{ pdfkit }}';
-        </script>
-        <script>
-            function redirectToRoomLayout() { //for final: go to theme
+
+            function redirectToLayout() {
                 console.log("Redirecting to Layout");
-                window.location.href = "/roomLayout";
+                window.location.href = "{{ url_for('build') }}";
+            }
+            function redirectToHTNP() {
+                console.log("Redirecting to HTNP");
+                window.location.href = "{{ url_for('planner') }}";
             }
         </script>
+        <button id="previous" onclick="redirectToLayout()"> To Room Layout </button>
+        <button id="submit" onclick="redirectToHTNP()"> Puzzle Progression </button>
+        <script src="/static/js/finalProduct.js"></script>
     </body>
 </html>

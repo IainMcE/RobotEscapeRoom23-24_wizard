@@ -277,6 +277,38 @@ function generatePyFile(){  //TODO switch cases for room device names and messag
             "and actually running though the puzzleList\n"+pythonOutput;
 }
 
+// Kaelin stuff
+function displayCounts(obj, title) {
+    let outputDiv = document.getElementById('output');
+    let container = document.createElement('div');
+    container.classList.add('object-container');
+    
+    let titleElement = document.createElement('h2');
+    titleElement.textContent = title;
+    container.appendChild(titleElement);
+
+    // Loop through object properties and create HTML elements
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            let keyElement = document.createElement('div');
+            keyElement.classList.add('object-key');
+            keyElement.textContent = key + ': ';
+            let valueElement = document.createElement('span');
+            valueElement.textContent = obj[key];
+            container.appendChild(keyElement);
+            container.appendChild(valueElement);
+            container.appendChild(document.createElement('br'));
+        }
+    }
+
+    outputDiv.appendChild(container);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    displayCounts(connectorCounts, 'Connector Counts');
+    displayCounts(wallCounts, 'Wall Counts');
+});
+
 // node -> python
 // 	each node is a task
 // 		each object input is another task
