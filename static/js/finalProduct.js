@@ -223,14 +223,29 @@ function downloadPDF(){
 
 }
 
-function generatePyFile(){  //TODO switch cases for room device names and message values
+var initValues = {"Motor":"1,0", "Servo":"0,0"}
+
+function generatePyFileString(){  //TODO switch cases for room device names and message values
     var stringProgression = sessionStorage.getItem("puzzleProgression");
     if(stringProgression === null){
         console.log("no puzzle progression");
         return;
     }
     var jsonProg = JSON.parse(stringProgression);
-    var pythonOutput = "puzzleList = [";
+    var pythonOutput = "puzzleList = [ makeResponse(\"setup\", \"start\", [";
+    //generate setup step
+    var setupList = []
+    for(var i = 0; i<jsonProg.length; i++){
+        if(jsonProg[i].RoomInput !== null){
+            setupList.push("[\"publish\", [\""+jsonProg[i].RoomInput+"\", \""+initValues.getItem(jsonProg[i].RoomInput.replace(/[0-9]/g, ''))+"\"]]")
+        }
+        if(jsonProg[i].RoomOutput !== null){
+            setupList.push("[\"publish\", [\""+jsonProg[i].RoomOutput+"\", \""+initValues.getItem(jsonProg[i].RoomOutput.replace(/[0-9]/g, ''))+"\"]]")
+        }
+    }
+    pythonOutput += setupList.join() + "]), \n    ";
+
+    //generate actual steps
     for(var i = 0; i<jsonProg.length; i++){
         console.log(jsonProg[i])
         pythonOutput += "makeResponse(\""+jsonProg[i].id+"\", ["
@@ -275,6 +290,7 @@ function generatePyFile(){  //TODO switch cases for room device names and messag
     pythonOutput += "]"
     // document.getElementById("pyOutput").innerText = "Will have extra stuff for the makeResponse class, "+
     //         "and actually running though the puzzleList\n"+pythonOutput;
+    return pythonOutput;
 }
 
 // Kaelin stuff
@@ -305,47 +321,8 @@ function displayCounts(obj, title) {
 }
 
 function generateAndDownloadPythonFile() {
-    var stringProgression = sessionStorage.getItem("puzzleProgression");
-    if (stringProgression === null) {
-        console.log("No puzzle progression data found.");
-        return;
-    }
 
-    var jsonProg = JSON.parse(stringProgression);
-    var puzzleList = [];
-
-    var pythonCode = "puzzleList = [\n";
-
-    for (var i = 0; i < jsonProg.length; i++) {
-        var puzzle = jsonProg[i];
-        var inputs = JSON.stringify(puzzle.Inputs);
-        var outputs = JSON.stringify(puzzle.Outputs); 
-
-        var puzzleString = `makeResponse("${puzzle.id}", ${inputs}, ${outputs}`;
-    
-        if (puzzle.RoomInput !== null || puzzle.RoomOutput !== null) {
-            puzzleString += ', [';
-
-            if (puzzle.RoomInput !== null) {
-                puzzleString += `"room/${puzzle.RoomInput}", "Some value"`;
-            }
-
-            if (puzzle.RoomOutput !== null) {
-                if (puzzle.RoomInput !== null) {
-                    puzzleString += ', ';
-                }
-                puzzleString += `"room/${puzzle.RoomOutput}", "Some value"`;
-            }
-
-            puzzleString += ']';
-        }
-
-        puzzleString += ')';
-        
-        puzzleList.push(puzzleString);
-    }
-
-    pythonCode += puzzleList.join(',\n') + "\n];";
+    var pythonCode = generatePyFileString();
 
     var blob = new Blob([pythonCode], { type: 'text/plain' });
 
