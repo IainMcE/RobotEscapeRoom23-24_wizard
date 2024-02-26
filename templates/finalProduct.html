@@ -5,16 +5,17 @@
     </head>
     <body>
         <div id="buttons-container">
-            <form id="pdfForm" action="/generatePDF" method="post">
+            <!-- <form id="pdfForm" action="/generatePDF" method="post">
                 <input type="hidden" id="canvasContent" name="canvas_content">
                 <input type="hidden" id="consoleOutput" name="console_output">
                 <input type="submit" id="generate-pdf" value="Generate PDF">
-            </form>
+            </form> -->
         </div>
         <pre id="pyOutput">
 
         </pre>
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
+        <div id="canvasDiv"></div>
 
         <div id="output"></div>
         <script>
@@ -31,7 +32,7 @@
         </script>
         <button id="previous" onclick="redirectToLayout()"> To Room Layout </button>
         <button id="submit" onclick="redirectToHTNP()"> Puzzle Progression </button>
-        <button id="downloadButton">Download Puzzle List</button>
+        <button id="downloadButton">Download Escape Room Progression</button>
         <script src="/static/js/finalProduct.js"></script>
     </body>
 </html>

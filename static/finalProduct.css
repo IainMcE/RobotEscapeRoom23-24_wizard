@@ -50,7 +50,7 @@ canvas{
     background-color: tan;
 }
 
-#floorEdit, #floorMap, #testimg{
+#floorEdit, #floorMap, #testimg, #canvasDiv{
     position: absolute;
     right:5%;
     width: 700px;

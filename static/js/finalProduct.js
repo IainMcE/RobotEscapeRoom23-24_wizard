@@ -2,10 +2,10 @@ let room;
 let height, width;
 let connectorCounts = {"4way": 0, "cornerTop": 0, "cornerBottom":0, "sideTop":0, "sideBottom":0};
 let wallCounts = {};
+const natImages = {"default": [99, 144], "doorway": [1821, 2048], "panel": [1821, 2048], "calibration": [450, 450]}
 
 window.addEventListener('DOMContentLoaded', ()=>{
     loadRoom();
-    generatePyFile();
 });
 
 function loadRoom(){
@@ -130,6 +130,7 @@ function drawRoom(){
             x = size*(j+1);
             y = size*(i+1);
             if(room[i][j].floor!==null){
+                setImage(room[i][j].floor, y, x, y+size, x+size)
                 context.beginPath()
                 context.rect(x, y, size, size)
                 context.stroke();
@@ -150,6 +151,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y-(size*0.3), x, y, x+size, y, corner2x, y-(size*0.3))
+                    setImage(room[i][j].walls[0], y-(size*0.3), Math.max(corner1x, x), y, Math.min(corner2x, x+size))
                 }
                 if(room[i][j].walls[1]!==null){//right wall
                     let corner1y = y, corner2y = y+size;
@@ -168,6 +170,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x+size, y+size, x+size, y, x+(size*1.3), corner1y, x+(size*1.3), corner2y)
+                    setImage(room[i][j].walls[1], Math.max(corner1y, y), x+size, Math.min(corner2y, y+size), x+(size*1.3))
                 }
                 if(room[i][j].walls[2]!==null){//bottom wall
                     let corner1x = x, corner2x = x+size;
@@ -186,6 +189,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(corner1x, y+(size*1.3), x, y+size, x+size, y+size, corner2x, y+(size*1.3))
+                    setImage(room[i][j].walls[2], y+size, Math.max(corner1x, x), y+(size*1.3), Math.min(corner2x, x+size))
                 }
                 if(room[i][j].walls[3]!==null){//left wall
                     let corner1y = y, corner2y = y+size;
@@ -204,6 +208,7 @@ function drawRoom(){
                         }
                     }
                     drawQuad(x, y+size, x, y, x-(size*0.3), corner1y, x-(size*0.3), corner2y)
+                    setImage(room[i][j].walls[3], Math.max(corner1y, y), x-(size*0.3), Math.min(corner2y, y+size), x)
                 }
             }
         }
@@ -219,6 +224,27 @@ function drawQuad(x1, y1, x2, y2, x3, y3, x4, y4){
     context.stroke();
 }
 
+function setImage(name, top, left, bottom, right){
+    if(name !== "wall" && name !== "floor"){
+        if(!(name in natImages)){
+            name = "default"
+        }
+        let container = document.getElementById("canvasDiv")
+        let image = document.createElement("img")
+        image.src = "/static/img/"+name+".png"
+        if(bottom-top<=right-left){
+            image.style.height = (bottom-top)+"px"
+            image.style.left = ((right+left)/2)-((bottom-top)/natImages[name][1]*natImages[name][0]/2)+"px"
+            image.style.top = top+"px"
+        }else{
+            image.style.width = (right-left)+"px"
+            image.style.left = left+"px"
+            image.style.top = ((bottom+top)/2)-((right-left)/natImages[name][0]*natImages[name][1]/2)+"px"
+        }
+        container.append(image)
+    }
+}
+
 function downloadPDF(){
 
 }
@@ -232,15 +258,28 @@ function generatePyFileString(){  //TODO switch cases for room device names and 
         return;
     }
     var jsonProg = JSON.parse(stringProgression);
-    var pythonOutput = "puzzleList = [ makeResponse(\"setup\", \"start\", [";
+    var pythonOutput = "from time import sleep\n"+"Client = None\n"+"\n"+"class Response(object):\n"+"\tcompleted = False\n"+
+    "\ttopic = \"\"\t  #string\n"+"\ttrigger = []\t#list of strings\n"+
+    "\tresponses = []   # [string type, list(string)/string values (see responseChoice)]\n"+"\n"+
+    "\tdef __init__(self, topic, trigger, responses):\n"+"\t\tself.topic = topic\n"+
+    "\t\tself.trigger = trigger\n"+"\t\tself.responses = responses\n"+"\t\n"+"\tdef respond(self, value):\n"+
+    "\t\tif(value in self.trigger):\n"+"\t\t\tself.trigger[self.trigger.index(value)] = True\n"+
+    "\t\t\tfor trigger in self.trigger:\n"+"\t\t\t\tif(not(trigger == True)):\n"+"\t\t\t\t\treturn\n"+
+    "\t\t\tfor response in self.responses:\n"+"\t\t\t\tresponseChoice(response[0], response[1])\n"+
+    "\t\t\tself.completed = True\n"+"\n"+"def makeResponse(topic, trigger, responses):\n"+
+    "\tresponse = Response(topic, trigger, responses)\n"+"\treturn response\n"+"\n"+"def responseChoice(type, value):\n"+
+    "\tmatch type:\n"+"\t\tcase \"publish\":\t # value = [topic, value]\n"+"\t\t\tClient.publish(value[0], payload=value[1])\n"+
+    "\t\t\treturn\n"+"\t\tcase \"log\":\t\t # value: string\n"+"\t\t\tprint(value)\n"+"\t\t\treturn\n"+
+    "\t\tcase \"unsubscribe\": # value: string\n"+"\t\t\tClient.unsubscribe(value)\n"+"\t\t\treturn\n"+"\t\tcase _:\n"+
+    "\t\t\tprint('bad response')\n"+"\t\t\treturn\n"+"puzzleList = [ makeResponse(\"setup\", \"start\", [";
     //generate setup step
     var setupList = []
     for(var i = 0; i<jsonProg.length; i++){
         if(jsonProg[i].RoomInput !== null){
-            setupList.push("[\"publish\", [\""+jsonProg[i].RoomInput+"\", \""+initValues.getItem(jsonProg[i].RoomInput.replace(/[0-9]/g, ''))+"\"]]")
+            setupList.push("[\"publish\", [\""+jsonProg[i].RoomInput+"\", \""+initValues[jsonProg[i].RoomInput.replace(/[0-9]/g, '')]+"\"]]")
         }
         if(jsonProg[i].RoomOutput !== null){
-            setupList.push("[\"publish\", [\""+jsonProg[i].RoomOutput+"\", \""+initValues.getItem(jsonProg[i].RoomOutput.replace(/[0-9]/g, ''))+"\"]]")
+            setupList.push("[\"publish\", [\""+jsonProg[i].RoomOutput+"\", \""+initValues[jsonProg[i].RoomOutput.replace(/[0-9]/g, '')]+"\"]]")
         }
     }
     pythonOutput += setupList.join() + "]), \n    ";
@@ -287,9 +326,13 @@ function generatePyFileString(){  //TODO switch cases for room device names and 
             pythonOutput+=",\n    "
         }
     }
-    pythonOutput += "]"
-    // document.getElementById("pyOutput").innerText = "Will have extra stuff for the makeResponse class, "+
-    //         "and actually running though the puzzleList\n"+pythonOutput;
+    pythonOutput += "]"+"def processSubscriptions(client, userdata, msg):\n"+"\tprint(\"recieved message | topic: \"+msg.topic +\n"+
+    "\t\t  \" \\tmsg: \"+str(msg.payload.decode(\"utf-8\")))\n"+"\tfor response in puzzleList:\n"+
+    "\t\tif(not(response.completed) and response.topic == msg.topic):\n"+"\t\t\tresponse.respond(str(msg.payload.decode(\"utf-8\")))\n"+
+    "\treturn\n"+"\n"+"def runMQTT(client):\n"+"\tglobal Client\n"+"\tClient = client\n"+"\tClient.on_message = processSubscriptions\n"+
+    "\ttopics = []\n"+"\tfor response in puzzleList:\n"+"\t\tif not(response.topic in topics):\n"+"\t\t\ttopics.append(response.topic)\n"+
+    "\tfor topic in topics:\n"+"\t\tsub = Client.subscribe(topic)\n"+"\t\tif(sub[1]==128):\n"+"\t\t\tprint('Failed to subscribe to topics')\n"+
+    "\tClient.publish(\"setup\", payload = \"start\")\n"+"\tsleep(1.0)\n"
     return pythonOutput;
 }
 
