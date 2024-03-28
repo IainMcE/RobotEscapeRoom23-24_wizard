@@ -342,7 +342,7 @@ function displayCounts(obj, title) {
     let container = document.createElement('div');
     container.classList.add('object-container');
     
-    let titleElement = document.createElement('h2');
+    let titleElement = document.createElement('h3');
     titleElement.textContent = title;
     container.appendChild(titleElement);
 
@@ -354,8 +354,12 @@ function displayCounts(obj, title) {
             keyElement.textContent = key + ': ';
             let valueElement = document.createElement('span');
             valueElement.textContent = obj[key];
+            let image = document.createElement("img");
+            image.src = "/static/img/irl/"+key+".jpg"
+            image.style.height = "100px";
             container.appendChild(keyElement);
-            container.appendChild(valueElement);
+            keyElement.appendChild(valueElement);
+            container.appendChild(image);
             container.appendChild(document.createElement('br'));
         }
     }
@@ -382,8 +386,8 @@ function generateAndDownloadPythonFile() {
 document.getElementById('downloadButton').addEventListener('click', generateAndDownloadPythonFile);
 
 window.addEventListener('DOMContentLoaded', () => {
-    displayCounts(connectorCounts, 'Connector Counts');
-    displayCounts(wallCounts, 'Wall Counts');
+    displayCounts(connectorCounts, 'Connectors');
+    displayCounts(wallCounts, 'Walls');
 });
 
 

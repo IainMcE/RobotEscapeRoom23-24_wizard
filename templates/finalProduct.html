@@ -4,20 +4,22 @@
         <link type="text/css" rel="stylesheet" href="static/finalProduct.css">
     </head>
     <body>
-        <div id="buttons-container">
-            <!-- <form id="pdfForm" action="/generatePDF" method="post">
+        <!-- <div id="buttons-container">
+            <form id="pdfForm" action="/generatePDF" method="post">
                 <input type="hidden" id="canvasContent" name="canvas_content">
                 <input type="hidden" id="consoleOutput" name="console_output">
                 <input type="submit" id="generate-pdf" value="Generate PDF">
-            </form> -->
+            </form>
         </div>
         <pre id="pyOutput">
 
-        </pre>
+        </pre> -->
         <canvas id="roomCanvas" width="700px" height="700px"></canvas>
         <div id="canvasDiv"></div>
 
-        <div id="output"></div>
+        <div id="output">
+            <h2>To build the escape room, the following parts are needed:</h2>
+        </div>
         <script>
             var pdfkit = '{{ pdfkit }}';
 

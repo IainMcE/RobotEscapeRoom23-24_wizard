@@ -88,3 +88,14 @@ p>img{
     width: 30%;
     height: 70%;
 }
+
+#output{
+    overflow: scroll;
+    width: 40%;
+    height: 600px;
+}
+
+.object-container>img{
+    position:relative;
+    left: 200px;
+}

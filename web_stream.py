@@ -17,14 +17,6 @@ def get_initial_room_state():
     print("Initial Room State:", initial_state)
     return initial_state
 
-# Define the list of puzzles
-puzzles = {
-    "Start": {"requirements": [], "next_state": "Puzzle1"},
-    "Puzzle1": {"requirements": ["Start"], "next_state": "Puzzle2"},
-    "Puzzle2": {"requirements": ["Start", "Puzzle1"], "next_state": "FinalPuzzle"},
-    "FinalPuzzle": {"requirements": ["Start", "Puzzle1", "Puzzle2"], "next_state": None},
-}
-
 def separate_sections(input_content):
     sections = {}
 
